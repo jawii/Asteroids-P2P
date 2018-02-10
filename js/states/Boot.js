@@ -1,10 +1,10 @@
-var MovingParts = MovingParts || {};
+var AsteroidMath = AsteroidMath || {};
 
 //setting game configuration and loading the assets for the loading screen
-MovingParts.BootState = {
+AsteroidMath.BootState = {
   init: function() {
     //loading screen will have a white background
-    this.game.stage.backgroundColor = '#fff';  
+    this.game.stage.backgroundColor = '#000';  
     
     //scaling options
     this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;

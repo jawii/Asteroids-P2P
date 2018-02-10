@@ -1,6 +1,6 @@
-var MovingParts = MovingParts || {};
+var AsteroidMath = AsteroidMath || {};
 
-MovingParts.GameState = {
+AsteroidMath.GameState = {
 
   init: function(currentLevel) {    
     //constants
@@ -27,11 +27,13 @@ MovingParts.GameState = {
     //initiate physics system
     this.game.physics.startSystem(Phaser.Physics.P2JS);
 
+    //particle storm
+    this.manager = this.game.plugins.add(Phaser.ParticleStorm);
   },
   create: function() {     
 
     //set bounds 
-    this.game.world.setBounds(0, 0, 1200, 700); 
+    this.game.world.setBounds(0, 0, 1200, 800); 
     //  Turn on impact events for the world, without this we get no collision callbacks
     this.game.physics.p2.setImpactEvents(true);
     this.game.physics.p2.restitution = 0.3;
@@ -65,11 +67,11 @@ MovingParts.GameState = {
     this.shipBlue.body.setCollisionGroup(this.playerCollisionGroup);
     this.shipBlue.body.collides(this.asteroidCollisionGroup, null, this);
     this.shipBlue.body.collides(this.playerCollisionGroup, null, this);
-    this.shipBlue.body.mass = 0.5;
+    this.shipBlue.body.mass = 1;
     // this.shipBlue.scale.set(0.5);
     this.shipBlue.body.debug = this.DEBUG;
 
-    this.shipRed = this.game.add.sprite(this.redData.spawn.x, this.redData.spawn.y, 'ship_red');
+    this.shipRed = this.game.add.sprite(this.redData.spawn.x, this.redData.spawn.y, 'ship_red', 'ship_red1.png');
     this.game.physics.p2.enable(this.shipRed, this.DEBUG);
     this.shipRed.body.clearShapes();
     this.shipRed.body.loadPolygon('physics', 'ship_red');
@@ -77,9 +79,23 @@ MovingParts.GameState = {
     this.shipRed.body.setCollisionGroup(this.playerCollisionGroup);
     this.shipRed.body.collides(this.asteroidCollisionGroup, null, this);
     this.shipRed.body.collides(this.playerCollisionGroup, null, this);
-    this.shipRed.body.mass = 0.5;
-    // this.shipRed.scale.set(0.5);
+    this.shipRed.body.mass = 1;
+    // this.shipRed.scale.set(0.25);
     this.shipRed.body.debug = this.DEBUG;
+
+    //emitter
+    var redEmitterData = {
+        lifespan: 3000,
+        image: '4x4',
+        vy: { min: -0.5, max: 0.5 },
+        vx: { min: -0.5, max: 0.5 },
+        alpha: { initial: 0, value: 1, control: 'linear' }
+    };
+    this.manager.addData('basic', redEmitterData);
+    this.circle = this.manager.createCircleZone(10);
+    this.emitter = this.manager.createEmitter();
+    this.emitter.addToWorld();
+
 
     //controls
     this.cursors = this.game.input.keyboard.createCursorKeys();   
@@ -97,7 +113,6 @@ MovingParts.GameState = {
     this.asteroids.physicsBodyType = Phaser.Physics.P2JS;
 
     var asteroid1 =this.asteroids.create(500, 500, 'asteroid1');
-    // asteroid.scale.set(0.5);
     asteroid1.body.clearShapes();
     asteroid1.body.loadPolygon('physics', 'asteroid1');
     asteroid1.body.setCollisionGroup(this.asteroidCollisionGroup);
@@ -106,7 +121,6 @@ MovingParts.GameState = {
     asteroid1.body.debug = this.DEBUG;
 
     var asteroid2 =this.asteroids.create(600, 600, 'asteroid2');
-    // asteroid.scale.set(0.5);
     asteroid2.body.clearShapes();
     asteroid2.body.loadPolygon('physics', 'asteroid2');
     asteroid2.body.setCollisionGroup(this.asteroidCollisionGroup);
@@ -114,35 +128,36 @@ MovingParts.GameState = {
     asteroid2.body.mass = 0.5;
     asteroid2.body.debug = this.DEBUG;
 
-    var asteroid3 =this.asteroids.create(600, 600, 'asteroid3');
-    // asteroid.scale.set(0.5);
-    asteroid3.body.clearShapes();
-    asteroid3.body.loadPolygon('physics', 'asteroid3');
-    asteroid3.body.setCollisionGroup(this.asteroidCollisionGroup);
-    asteroid3.body.collides([this.asteroidCollisionGroup, this.playerCollisionGroup])
-    asteroid3.body.mass = 1;
-    asteroid3.body.debug = this.DEBUG;
-
-
-    console.log(this.asteroids);
+    var data3={texture: 'asteroid3', physic: 'asteroid3', mass: 10}
+    var asteroid3 = new AsteroidMath.Asteroid(this, 800, 400, data3);
 
 
 
 
   },   
   update: function() {  
+    //reset ship frames
+    this.shipRed.frameName = 'ship_red1.png'
 
     //ship movement
-    if (this.cursors.left.isDown){this.shipBlue.body.rotateLeft(100);}
-    else if(this.cursors.right.isDown){this.shipBlue.body.rotateRight(100);}
+    if (this.cursors.left.isDown){this.shipBlue.body.rotateLeft(50);}
+    else if(this.cursors.right.isDown){this.shipBlue.body.rotateRight(50);}
     else{this.shipBlue.body.setZeroRotation();}
     if(this.cursors.up.isDown){this.shipBlue.body.thrust(400);}
     else if(this.cursors.down.isDown){this.shipBlue.body.reverse(400);}
 
-    if (this.shipRedLeft.isDown){this.shipRed.body.rotateLeft(100);}
-    else if(this.shipRedRight.isDown){this.shipRed.body.rotateRight(100);}
+    if (this.shipRedLeft.isDown){this.shipRed.body.rotateLeft(50);}
+    else if(this.shipRedRight.isDown){this.shipRed.body.rotateRight(50); console.log(this.shipRed.angle)}
     else{this.shipRed.body.setZeroRotation();}
-    if(this.shipRedUp.isDown){this.shipRed.body.thrust(400);}
+    if(this.shipRedUp.isDown){
+        //animation
+        this.shipRed.frameName = 'ship_red2.png';
+        this.shipRed.body.thrust(400);
+        var angle = this.shipRed.body.angle
+        var x = this.shipRed.x - Math.sin(angle* 0.0174532925) * 25;
+        var y = this.shipRed.y + Math.cos(angle * 0.0174532925) * 25;
+        this.emitter.emit('basic', x, y, { zone: this.circle, total: 1 });
+    }
     else if(this.shipRedDown.isDown){this.shipRed.body.reverse(400);}
 
 

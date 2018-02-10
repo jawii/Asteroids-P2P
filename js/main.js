@@ -1,9 +1,9 @@
-var MovingParts = MovingParts || {};
+var AsteroidMath = AsteroidMath || {};
 
-MovingParts.game = new Phaser.Game(1200, 700, Phaser.AUTO);
+AsteroidMath.game = new Phaser.Game(1200, 800, Phaser.AUTO);
 
-MovingParts.game.state.add('Boot', MovingParts.BootState); 
-MovingParts.game.state.add('Preload', MovingParts.PreloadState); 
-MovingParts.game.state.add('Game', MovingParts.GameState);
+AsteroidMath.game.state.add('Boot', AsteroidMath.BootState); 
+AsteroidMath.game.state.add('Preload', AsteroidMath.PreloadState); 
+AsteroidMath.game.state.add('Game', AsteroidMath.GameState);
 
-MovingParts.game.state.start('Boot'); 
+AsteroidMath.game.state.start('Boot'); 
