@@ -17,6 +17,7 @@ AsteroidMath.Asteroid = function(state, x, y, data){
 	this.body.setCollisionGroup(AsteroidMath.GameState.asteroidCollisionGroup);
 	this.body.collides([AsteroidMath.GameState.asteroidCollisionGroup, AsteroidMath.GameState.playerCollisionGroup, AsteroidMath.GameState.wallsCollisionGroup]);
 	this.body.mass = this.data.mass;
+	this.game.physics.p2.setMaterial(AsteroidMath.GameState.asteroidMaterial, [this.body]);
 
 	// this.body.createBodyCallback(AsteroidMath.GameState.blueHomeArea, this.asteroidCollected, this);
 

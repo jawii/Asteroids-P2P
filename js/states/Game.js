@@ -7,20 +7,18 @@ AsteroidMath.GameState = {
     // this.MAX_DISTANCE_SHOOT = 190;
     // this.MAX_SPEED_SHOOT = 1000;
     // this.SHOOT_FACTOR = 12;
-    this.ACCELERATION = 200;
-    this.ANGULARVELOCITY = 500;
-    this.BULLET_SPEED = 1000;
-    this.FIRE_RATE = 200;
+    this.THRUST = 200;
     this.DEBUG = false;
+
 
     this.blueData = {
       spawn: {x: 150, y: 130},
-      homeArea: {x1: 0, x2: 190, y1: 0, y2: 100},
+      homeArea: {x1: 0, x2: 190, y1: 0, y2: 120},
       angle: 135
     }
     this.redData = {
       spawn: {x: 1060, y: 550},
-      homeArea: {x1: 1000, x2: 1200, y1: 580, y2: 700},
+      homeArea: {x1: 1000, x2: 1200, y1: 680, y2: 800},
       angle: -45
     }
     //keep track of the current level
@@ -95,10 +93,30 @@ AsteroidMath.GameState = {
     background.body.setCollisionGroup(this.wallsCollisionGroup);
     background.body.collides(this.asteroidCollisionGroup, null, this);
     background.body.collides(this.playerCollisionGroup, null, this);
+    this.game.world.sendToBack(background);
+
+    var wall1 = this.game.add.sprite(200, 400, 'sprites', 'wall1.png');
+    this.game.physics.p2.enable(wall1, this.DEBUG);
+    wall1.body.clearShapes();
+    wall1.scale.set(0.5);
+    wall1.body.loadPolygon('physics', 'wall1');
+    wall1.body.static = true;
+    wall1.body.setCollisionGroup(this.wallsCollisionGroup);
+    wall1.body.collides(this.asteroidCollisionGroup, null, this);
+    wall1.body.collides(this.playerCollisionGroup, null, this);
     // background.body.debug = true;
+
 
     //PLAYERS
     this.createShips();
+
+    //MATERIALS
+    this.asteroidMaterial = this.game.physics.p2.createMaterial('asteroidMaterial');
+    this.shipMaterial = this.game.physics.p2.createMaterial('shipMaterial');
+    this.game.physics.p2.setMaterial(this.shipMaterial, [this.shipRed.body, this.shipBlue.body]);
+    this.asteroidShipContactMaterial = this.game.physics.p2.createContactMaterial(this.shipMaterial, this.asteroidMaterial);
+    this.asteroidShipContactMaterial.restitution = 0;
+
 
     //asteroid
     this.asteroids = this.add.group();
@@ -108,41 +126,41 @@ AsteroidMath.GameState = {
     var data1={texture: 'triangle', physic: 'triangle', mass: 1}
     var asteroid1 = new AsteroidMath.Asteroid(this, 350, 400, data1);
     var data2={texture: 'hexagon', physic: 'hexagon', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 450, 400, data2);
+    var asteroid2 = new AsteroidMath.Asteroid(this, 450, 400, data2);
     var data3={texture: 'square', physic: 'square', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 550, 400, data3);
+    var asteroid3 = new AsteroidMath.Asteroid(this, 550, 400, data3);
     var data4={texture: 'star', physic: 'star', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 650, 400, data4);
+    var asteroid4 = new AsteroidMath.Asteroid(this, 650, 400, data4);
     var data5={texture: 'pentagon', physic: 'pentagon', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 750, 400, data5);
+    var asteroid5 = new AsteroidMath.Asteroid(this, 750, 400, data5);
     var data6={texture: 'circle', physic: 'circle', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 850, 400, data6);
+    var asteroid6 = new AsteroidMath.Asteroid(this, 850, 400, data6);
 
-    var data1={texture: 'triangle', physic: 'triangle', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 350, 520, data1);
-    var data2={texture: 'hexagon', physic: 'hexagon', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 450, 520, data2);
-    var data3={texture: 'square', physic: 'square', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 550, 520, data3);
-    var data4={texture: 'star', physic: 'star', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 650, 520, data4);
-    var data5={texture: 'pentagon', physic: 'pentagon', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 750, 520, data5);
-    var data6={texture: 'circle', physic: 'circle', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 850, 520, data6);
+    // var data1={texture: 'triangle', physic: 'triangle', mass: 1}
+    // var asteroid1 = new AsteroidMath.Asteroid(this, 350, 520, data1);
+    // var data2={texture: 'hexagon', physic: 'hexagon', mass: 1}
+    // var asteroid1 = new AsteroidMath.Asteroid(this, 450, 520, data2);
+    // var data3={texture: 'square', physic: 'square', mass: 1}
+    // var asteroid1 = new AsteroidMath.Asteroid(this, 550, 520, data3);
+    // var data4={texture: 'star', physic: 'star', mass: 1}
+    // var asteroid1 = new AsteroidMath.Asteroid(this, 650, 520, data4);
+    // var data5={texture: 'pentagon', physic: 'pentagon', mass: 1}
+    // var asteroid1 = new AsteroidMath.Asteroid(this, 750, 520, data5);
+    // var data6={texture: 'circle', physic: 'circle', mass: 1}
+    // var asteroid1 = new AsteroidMath.Asteroid(this, 850, 520, data6);
 
-    var data1={texture: 'triangle', physic: 'triangle', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 350, 320, data1);
-    var data2={texture: 'hexagon', physic: 'hexagon', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 450, 320, data2);
-    var data3={texture: 'square', physic: 'square', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 550, 320, data3);
-    var data4={texture: 'star', physic: 'star', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 650, 320, data4);
-    var data5={texture: 'pentagon', physic: 'pentagon', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 750, 320, data5);
-    var data6={texture: 'circle', physic: 'circle', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 850, 320, data6);
+    // var data1={texture: 'triangle', physic: 'triangle', mass: 1}
+    // var asteroid1 = new AsteroidMath.Asteroid(this, 350, 320, data1);
+    // var data2={texture: 'hexagon', physic: 'hexagon', mass: 1}
+    // var asteroid1 = new AsteroidMath.Asteroid(this, 450, 320, data2);
+    // var data3={texture: 'square', physic: 'square', mass: 1}
+    // var asteroid1 = new AsteroidMath.Asteroid(this, 550, 320, data3);
+    // var data4={texture: 'star', physic: 'star', mass: 1}
+    // var asteroid1 = new AsteroidMath.Asteroid(this, 650, 320, data4);
+    // var data5={texture: 'pentagon', physic: 'pentagon', mass: 1}
+    // var asteroid1 = new AsteroidMath.Asteroid(this, 750, 320, data5);
+    // var data6={texture: 'circle', physic: 'circle', mass: 1}
+    // var asteroid1 = new AsteroidMath.Asteroid(this, 850, 320, data6);
 
 
   },   
@@ -156,14 +174,14 @@ AsteroidMath.GameState = {
     else{this.shipBlue.body.setZeroRotation();}
     if(this.cursors.up.isDown){
         this.shipBlue.frameName = 'ship_blue2.png';
-        this.shipBlue.body.thrust(400);
+        this.shipBlue.body.thrust(this.THRUST);
         var angle = this.shipBlue.body.angle
         var x = this.shipBlue.x - Math.sin(angle* 0.0174532925) * 25;
         var y = this.shipBlue.y + Math.cos(angle * 0.0174532925) * 25;
         this.blueShipEmitter.emit('basic', x, y, { zone: this.blueShipCircle, total: 1 });
 
     }
-    else if(this.cursors.down.isDown){this.shipBlue.body.reverse(100);}
+    else if(this.cursors.down.isDown){this.shipBlue.body.reverse(this.THRUST/2);}
 
     if (this.shipRedLeft.isDown){this.shipRed.body.rotateLeft(50);}
     else if(this.shipRedRight.isDown){this.shipRed.body.rotateRight(50);}
@@ -171,13 +189,13 @@ AsteroidMath.GameState = {
     if(this.shipRedUp.isDown){
         //animation
         this.shipRed.frameName = 'ship_red2.png';
-        this.shipRed.body.thrust(400);
+        this.shipRed.body.thrust(this.THRUST);
         var angle = this.shipRed.body.angle
         var x = this.shipRed.x - Math.sin(angle* 0.0174532925) * 25;
         var y = this.shipRed.y + Math.cos(angle * 0.0174532925) * 25;
         this.redShipEmitter.emit('basic', x, y, { zone: this.redShipCircle, total: 1 });
     }
-    else if(this.shipRedDown.isDown){this.shipRed.body.reverse(100);}
+    else if(this.shipRedDown.isDown){this.shipRed.body.reverse(this.THRUST/2);}
   },
 
   createShips: function(){
@@ -201,12 +219,12 @@ AsteroidMath.GameState = {
     this.blueParticleManager = this.game.plugins.add(Phaser.ParticleStorm);
 
     var blueEmitterData = {
-        image: 'colorsHD',
-        frame: ['blue'],
+        image: '4x4_blue',
+        // frame: ['blue'],
         lifespan: 2000,
         blendMode: 'ADD',
         alpha: { initial: 0, value: 1, control: 'linear' },
-        scale: { value: 1.0, control: [ { x: 0, y: 0.2 }] },
+        scale: { value: 1.0, control: [ { x: 0, y: 0.4 }] },
         sendToBack: true
     };
 
@@ -214,6 +232,7 @@ AsteroidMath.GameState = {
     this.blueShipCircle = this.blueParticleManager.createCircleZone(10);
     this.blueShipEmitter = this.blueParticleManager.createEmitter();
     this.blueShipEmitter.addToWorld();
+
 
     //REDSHIP
     this.shipRed = this.game.add.sprite(this.redData.spawn.x, this.redData.spawn.y, 'sprites', 'ship_red1.png');
@@ -233,12 +252,12 @@ AsteroidMath.GameState = {
     this.redParticleManager = this.game.plugins.add(Phaser.ParticleStorm);
 
     var redEmitterData = {
-        image: 'colorsHD',
-        frame: ['red'],
+        image: '4x4_red',
+        // frame: ['red'],
         lifespan: 2000,
         blendMode: 'ADD',
         alpha: { initial: 0, value: 1, control: 'linear' },
-        scale: { value: 1.0, control: [ { x: 0, y: 0.2 }] },
+        scale: { value: 1.0, control: [ { x: 0, y: 0.4 }] },
         sendToBack: true
     };
 

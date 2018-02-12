@@ -21,7 +21,8 @@ AsteroidMath.PreloadState = {
 
     //physics
     this.load.physics('physics', 'assets/data/physics.json');
-    this.load.image('4x4', 'assets/images/4x4.png');
+    this.load.image('4x4_red', 'assets/images/4x4_red.png');
+    this.load.image('4x4_blue', 'assets/images/4x4_blue.png');
 
     //emitter
     this.game.load.path = 'assets/images/';
