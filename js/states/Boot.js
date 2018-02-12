@@ -7,7 +7,7 @@ AsteroidMath.BootState = {
     this.game.stage.backgroundColor = '#000';  
     
     //scaling options
-    this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    // this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     
     //have the game centered horizontally
     this.scale.pageAlignHorizontally = true;
