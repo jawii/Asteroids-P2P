@@ -114,9 +114,15 @@ AsteroidMath.GameState = {
     this.asteroidMaterial = this.game.physics.p2.createMaterial('asteroidMaterial');
     this.shipMaterial = this.game.physics.p2.createMaterial('shipMaterial');
     this.game.physics.p2.setMaterial(this.shipMaterial, [this.shipRed.body, this.shipBlue.body]);
+    
     this.asteroidShipContactMaterial = this.game.physics.p2.createContactMaterial(this.shipMaterial, this.asteroidMaterial);
     this.asteroidShipContactMaterial.restitution = 0;
+    
+    this.asteroidAsteroidContactMaterial = this.game.physics.p2.createContactMaterial(this.asteroidMaterial, this.asteroidMaterial);
+    this.asteroidAsteroidContactMaterial.restitution = 0.7;
 
+    this.shipShipContactMaterial = this.game.physics.p2.createContactMaterial(this.shipMaterial, this.shipMaterial);
+    this.shipShipContactMaterial.restitution = 2.0;
 
     //asteroid
     this.asteroids = this.add.group();
