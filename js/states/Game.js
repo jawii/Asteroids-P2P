@@ -7,8 +7,9 @@ AsteroidMath.GameState = {
     // this.MAX_DISTANCE_SHOOT = 190;
     // this.MAX_SPEED_SHOOT = 1000;
     // this.SHOOT_FACTOR = 12;
-    this.THRUST = 200;
+    this.THRUST = 750;
     this.DEBUG = false;
+    this.SHIPMASS = 5;
 
 
     this.blueData = {
@@ -21,6 +22,25 @@ AsteroidMath.GameState = {
       homeArea: {x1: 1000, x2: 1200, y1: 680, y2: 800},
       angle: -45
     }
+
+    this.blueScores = {
+        circles: 0,
+        hexagons: 0,
+        pentagons: 0,
+        squares: 0,
+        stars: 0,
+        triangles: 0
+    }
+    this.redScores = {
+        circles: 0,
+        hexagons: 0,
+        pentagons: 0,
+        squares: 0,
+        stars: 0,
+        triangles: 0
+    }
+
+    this.asteroidTextures = ['circle', 'hexagon', 'pentagon', 'square', 'star', 'triangle'];
     //keep track of the current level
     this.currentLevel = currentLevel ? currentLevel : 'level1';
 
@@ -54,6 +74,15 @@ AsteroidMath.GameState = {
     this.walls = this.add.group();
     this.walls.enableBody = true;
     this.walls.physicsBodyType = Phaser.Physics.P2JS;
+
+    //gui
+    //create group for all icons
+    this.guiIconGroup = this.game.add.group();
+    this.guiTextGroupBlue = this.game.add.group();
+    this.guiTextGroupRed = this.game.add.group();
+    this.game.world.sendToBack(this.guiIconGroup);
+    this.game.world.sendToBack(this.guiTextGroupBlue);
+    this.game.world.sendToBack(this.guiTextGroupRed);
 
    
 
@@ -129,44 +158,10 @@ AsteroidMath.GameState = {
     this.asteroids.enableBody = true;
     this.asteroids.physicsBodyType = Phaser.Physics.P2JS;
 
-    var data1={texture: 'triangle', physic: 'triangle', mass: 1}
-    var asteroid1 = new AsteroidMath.Asteroid(this, 350, 400, data1);
-    var data2={texture: 'hexagon', physic: 'hexagon', mass: 1}
-    var asteroid2 = new AsteroidMath.Asteroid(this, 450, 400, data2);
-    var data3={texture: 'square', physic: 'square', mass: 1}
-    var asteroid3 = new AsteroidMath.Asteroid(this, 550, 400, data3);
-    var data4={texture: 'star', physic: 'star', mass: 1}
-    var asteroid4 = new AsteroidMath.Asteroid(this, 650, 400, data4);
-    var data5={texture: 'pentagon', physic: 'pentagon', mass: 1}
-    var asteroid5 = new AsteroidMath.Asteroid(this, 750, 400, data5);
-    var data6={texture: 'circle', physic: 'circle', mass: 1}
-    var asteroid6 = new AsteroidMath.Asteroid(this, 850, 400, data6);
+    this.loadLevel();
 
-    // var data1={texture: 'triangle', physic: 'triangle', mass: 1}
-    // var asteroid1 = new AsteroidMath.Asteroid(this, 350, 520, data1);
-    // var data2={texture: 'hexagon', physic: 'hexagon', mass: 1}
-    // var asteroid1 = new AsteroidMath.Asteroid(this, 450, 520, data2);
-    // var data3={texture: 'square', physic: 'square', mass: 1}
-    // var asteroid1 = new AsteroidMath.Asteroid(this, 550, 520, data3);
-    // var data4={texture: 'star', physic: 'star', mass: 1}
-    // var asteroid1 = new AsteroidMath.Asteroid(this, 650, 520, data4);
-    // var data5={texture: 'pentagon', physic: 'pentagon', mass: 1}
-    // var asteroid1 = new AsteroidMath.Asteroid(this, 750, 520, data5);
-    // var data6={texture: 'circle', physic: 'circle', mass: 1}
-    // var asteroid1 = new AsteroidMath.Asteroid(this, 850, 520, data6);
+    this.createGui();
 
-    // var data1={texture: 'triangle', physic: 'triangle', mass: 1}
-    // var asteroid1 = new AsteroidMath.Asteroid(this, 350, 320, data1);
-    // var data2={texture: 'hexagon', physic: 'hexagon', mass: 1}
-    // var asteroid1 = new AsteroidMath.Asteroid(this, 450, 320, data2);
-    // var data3={texture: 'square', physic: 'square', mass: 1}
-    // var asteroid1 = new AsteroidMath.Asteroid(this, 550, 320, data3);
-    // var data4={texture: 'star', physic: 'star', mass: 1}
-    // var asteroid1 = new AsteroidMath.Asteroid(this, 650, 320, data4);
-    // var data5={texture: 'pentagon', physic: 'pentagon', mass: 1}
-    // var asteroid1 = new AsteroidMath.Asteroid(this, 750, 320, data5);
-    // var data6={texture: 'circle', physic: 'circle', mass: 1}
-    // var asteroid1 = new AsteroidMath.Asteroid(this, 850, 320, data6);
 
 
   },   
@@ -216,7 +211,7 @@ AsteroidMath.GameState = {
     this.shipBlue.body.collides(this.asteroidCollisionGroup, null, this);
     this.shipBlue.body.collides(this.playerCollisionGroup, null, this);
     this.shipBlue.body.collides(this.wallsCollisionGroup, null, this);
-    this.shipBlue.body.mass = 1;
+    this.shipBlue.body.mass = this.SHIPMASS;
     this.shipBlue.body.angle = this.blueData.angle;
     // this.shipBlue.scale.set(0.5);
     this.shipBlue.body.debug = this.DEBUG;
@@ -251,7 +246,7 @@ AsteroidMath.GameState = {
     this.shipRed.body.collides(this.asteroidCollisionGroup, null, this);
     this.shipRed.body.collides(this.playerCollisionGroup, null, this);
     this.shipRed.body.collides(this.wallsCollisionGroup, null, this);
-    this.shipRed.body.mass = 1;
+    this.shipRed.body.mass = this.SHIPMASS;
     this.shipRed.body.angle = this.redData.angle;
     // this.shipRed.scale.set(0.25);
     this.shipRed.body.debug = this.DEBUG;
@@ -284,5 +279,159 @@ AsteroidMath.GameState = {
 
   gameOver: function() {
     this.game.state.start('Game', true, false, this.currentLevel);
-  }
+  },
+
+  loadLevel: function(){
+    //creates 10 asteroids
+    for (var i = 0 ; i < 11 ; i++){
+        this.createRandomAsteroid();
+    }
+    
+
+  },
+
+  createRandomAsteroid: function(){
+
+    //create random place in game area
+    var x = this.game.rnd.integerInRange(0, this.game.width);
+    var y = this.game.rnd.integerInRange(0, this.game.height);
+
+    //check if x and y dont overlap with walls
+    var data = {}
+    data.texture = this.asteroidTextures[Math.floor(Math.random()*this.asteroidTextures.length)];
+    data.physic = data.texture;
+    // data.mass = Math.random() * 10;
+    data.mass = 10;
+    console.log(data.mass);
+
+    //look for dead element
+    var newElement = this.asteroids.getFirstDead();
+
+    if(!newElement || this.asteroids.children.length < 20){
+      newElement = new AsteroidMath.Asteroid(this, x, y, data);
+      this.asteroids.add(newElement);
+    }
+    else{
+      newElement.reset(x, y, data);
+    }
+    return newElement;
+
+}, 
+
+createGui: function(){
+
+    var scoreTextStyle = {
+        font: '14px Arial',
+        fill: 'white'
+    };
+  
+    //ICONS
+    //blue player
+    //first row
+    var x1 = 60;
+    //second row
+    var x2 = 120;
+    //y-offset
+    var offsetY = 25;
+    var triangleBlue = this.game.add.sprite(x1, 45, 'sprites', 'triangle.png');
+    this.guiIconGroup.add(triangleBlue);
+    var squareBlue = this.game.add.sprite(x1, 45 + offsetY * 1, 'sprites', 'square.png');
+    this.guiIconGroup.add(squareBlue);
+    var pentagonBlue = this.game.add.sprite(x1, 45 + offsetY * 2, 'sprites', 'pentagon.png');
+    this.guiIconGroup.add(pentagonBlue);
+
+    var hexagonBlue = this.game.add.sprite(x2, 45 + offsetY * 0, 'sprites', 'hexagon.png');
+    this.guiIconGroup.add(hexagonBlue);
+    var circleBlue = this.game.add.sprite(x2, 45 + offsetY * 1, 'sprites', 'circle.png');
+    this.guiIconGroup.add(circleBlue);
+    var starBlue = this.game.add.sprite(x2, 45 + offsetY * 2, 'sprites', 'star.png');
+    this.guiIconGroup.add(starBlue);
+
+    var textOffset = 2;
+    var triangleBlueText = this.game.add.text(triangleBlue.x + 25, triangleBlue.y + textOffset, 'x ' + this.blueScores.triangles, scoreTextStyle);
+    triangleBlueText.name = "triangle";
+    this.guiTextGroupBlue.add(triangleBlueText);
+    var squareBlueText = this.game.add.text(squareBlue.x + 25, squareBlue.y + textOffset, 'x ' + this.blueScores.squares, scoreTextStyle);
+    squareBlueText.name = "square";
+    this.guiTextGroupBlue.add(squareBlueText);
+    var pentagonBlueText = this.game.add.text(pentagonBlue.x + 25, pentagonBlue.y + textOffset, 'x ' + this.blueScores.pentagons, scoreTextStyle);
+    pentagonBlueText.name = "pentagon";
+    this.guiTextGroupBlue.add(pentagonBlueText);
+
+    var hexagonBlueText = this.game.add.text(hexagonBlue.x + 25, hexagonBlue.y + textOffset, 'x ' + this.blueScores.hexagons, scoreTextStyle);
+    hexagonBlueText.name = "hexagon";
+    this.guiTextGroupBlue.add(hexagonBlueText);
+    var circleBlueText = this.game.add.text(circleBlue.x + 25, circleBlue.y + textOffset, 'x ' + this.blueScores.circles, scoreTextStyle);
+    circleBlueText.name = "circle"
+    this.guiTextGroupBlue.add(circleBlueText);
+    var starBlueText = this.game.add.text(starBlue.x + 25, starBlue.y + textOffset, 'x ' + this.blueScores.stars, scoreTextStyle);
+    starBlueText.name = "star"
+    this.guiTextGroupBlue.add(starBlueText);
+
+
+    //RED
+    var x3 = 1050;
+    //second row
+    var x4 = 1110;
+    var y1 = 700
+    var triangleRed = this.game.add.sprite(x3, y1, 'sprites', 'triangle.png');
+    this.guiIconGroup.add(triangleRed);
+    var squareRed = this.game.add.sprite(x3, y1 + offsetY * 1, 'sprites', 'square.png');
+    this.guiIconGroup.add(squareRed);
+    var pentagonRed = this.game.add.sprite(x3, y1 + offsetY * 2, 'sprites', 'pentagon.png');
+    this.guiIconGroup.add(pentagonRed);
+
+    var hexagonRed = this.game.add.sprite(x4, y1 + offsetY * 0, 'sprites', 'hexagon.png');
+    this.guiIconGroup.add(hexagonRed);
+    var circleRed = this.game.add.sprite(x4, y1 + offsetY * 1, 'sprites', 'circle.png');
+    this.guiIconGroup.add(circleRed);
+    var starRed = this.game.add.sprite(x4, y1 + offsetY * 2, 'sprites', 'star.png');
+    this.guiIconGroup.add(starRed);
+
+    var textOffset = 2;
+    var triangleRedText = this.game.add.text(triangleRed.x + 25, triangleRed.y + textOffset, 'x ' + this.redScores.triangles, scoreTextStyle);
+    triangleRedText.name = "triangle";
+    this.guiTextGroupRed.add(triangleRedText);
+    var squareRedText = this.game.add.text(squareRed.x + 25, squareRed.y + textOffset, 'x ' + this.redScores.squares, scoreTextStyle);
+    squareRedText.name = "square";
+    this.guiTextGroupRed.add(squareRedText);
+    var pentagonRedText = this.game.add.text(pentagonRed.x + 25, pentagonRed.y + textOffset, 'x ' + this.redScores.pentagons, scoreTextStyle);
+    pentagonRedText.name = "pentagon";
+    this.guiTextGroupRed.add(pentagonRedText);
+
+    var hexagonRedText = this.game.add.text(hexagonRed.x + 25, hexagonRed.y + textOffset, 'x ' + this.redScores.hexagons, scoreTextStyle);
+    hexagonRedText.name = "hexagon";
+    this.guiTextGroupRed.add(hexagonRedText);
+    var circleRedText = this.game.add.text(circleRed.x + 25, circleRed.y + textOffset, 'x ' + this.redScores.circles, scoreTextStyle);
+    circleRedText.name = "circle";
+    this.guiTextGroupRed.add(circleRedText);
+    var starRedText = this.game.add.text(starRed.x + 25, starRed.y + textOffset, 'x ' + this.redScores.stars, scoreTextStyle);
+    starRedText.name = "star";
+    this.guiTextGroupRed.add(starRedText);
+
+    this.guiIconGroup.forEach(function(element){
+        element.anchor.setTo(0.5);
+        element.scale.setTo(0.18);
+    }, this);
+
+    this.guiTextGroupRed.forEach(function(element){
+        element.anchor.setTo(0.5);
+    }, this);
+    this.guiTextGroupBlue.forEach(function(element){
+        element.anchor.setTo(0.5);
+    }, this);
+
+},
+
+updateScores: function(){
+    //update scores
+    this.guiTextGroupBlue.forEach(function(element){
+        element.setText("x " + this.blueScores[element.name + 's']);
+    }, this);
+    this.guiTextGroupRed.forEach(function(element){
+        element.setText("x " + this.redScores[element.name + 's']);
+    }, this);
+
+}
+
 };
