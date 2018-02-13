@@ -77,10 +77,12 @@ AsteroidMath.GameState = {
 
     //gui
     //create group for all icons
-    this.guiIconGroup = this.game.add.group();
+    this.guiIconGroupBlue = this.game.add.group();
+    this.guiIconGroupRed = this.game.add.group();
     this.guiTextGroupBlue = this.game.add.group();
     this.guiTextGroupRed = this.game.add.group();
-    this.game.world.sendToBack(this.guiIconGroup);
+    this.game.world.sendToBack(this.guiIconGroupBlue);
+    this.game.world.sendToBack(this.guiIconGroupRed);
     this.game.world.sendToBack(this.guiTextGroupBlue);
     this.game.world.sendToBack(this.guiTextGroupRed);
 
@@ -302,7 +304,7 @@ AsteroidMath.GameState = {
     data.physic = data.texture;
     // data.mass = Math.random() * 10;
     data.mass = 10;
-    console.log(data.mass);
+    // console.log(data.mass);
 
     //look for dead element
     var newElement = this.asteroids.getFirstDead();
@@ -329,25 +331,42 @@ createGui: function(){
     //blue player
     //first row
     var x1 = 60;
+    var y1 = 45
     //second row
     var x2 = 120;
     //y-offset
     var offsetY = 25;
-    var triangleBlue = this.game.add.sprite(x1, 45, 'sprites', 'triangle.png');
-    this.guiIconGroup.add(triangleBlue);
-    var squareBlue = this.game.add.sprite(x1, 45 + offsetY * 1, 'sprites', 'square.png');
-    this.guiIconGroup.add(squareBlue);
-    var pentagonBlue = this.game.add.sprite(x1, 45 + offsetY * 2, 'sprites', 'pentagon.png');
-    this.guiIconGroup.add(pentagonBlue);
-
-    var hexagonBlue = this.game.add.sprite(x2, 45 + offsetY * 0, 'sprites', 'hexagon.png');
-    this.guiIconGroup.add(hexagonBlue);
-    var circleBlue = this.game.add.sprite(x2, 45 + offsetY * 1, 'sprites', 'circle.png');
-    this.guiIconGroup.add(circleBlue);
-    var starBlue = this.game.add.sprite(x2, 45 + offsetY * 2, 'sprites', 'star.png');
-    this.guiIconGroup.add(starBlue);
-
     var textOffset = 2;
+
+    var iconAndTextCoordsBlue = [
+        [{x: x1, y: y1 + offsetY * 0}, {x: x1 + 25, y: offsetY * 0 + textOffset}],
+        [{x: x1, y: y1 + offsetY * 1}, {x: x1 + 25, y: offsetY * 1 + textOffset}],
+        [{x: x1, y: y1 + offsetY * 2}, {x: x1 + 25, y: offsetY * 2 + textOffset}],
+
+        [{x: x2, y: y1 + offsetY * 0}, {x: x1 + 25, y: offsetY * 0 + textOffset}],
+        [{x: x2, y: y1 + offsetY * 1}, {x: x1 + 25, y: offsetY * 0 + textOffset}],
+        [{x: x2, y: y1 + offsetY * 2}, {x: x1 + 25, y: offsetY * 0 + textOffset}],
+        ];
+    
+    var triangleBlue = this.game.add.sprite(iconAndTextCoordsBlue[0][0].x, 45, 'sprites', 'triangle.png');
+    triangleBlue.name = "triangle";
+    this.guiIconGroupBlue.add(triangleBlue);
+    var squareBlue = this.game.add.sprite(x1, 45 + offsetY * 1, 'sprites', 'square.png');
+    squareBlue.name = "square";
+    this.guiIconGroupBlue.add(squareBlue);
+    var pentagonBlue = this.game.add.sprite(x1, 45 + offsetY * 2, 'sprites', 'pentagon.png');
+    pentagonBlue.name = 'pentagon';
+    this.guiIconGroupBlue.add(pentagonBlue);
+    var hexagonBlue = this.game.add.sprite(x2, 45 + offsetY * 0, 'sprites', 'hexagon.png');
+    hexagonBlue.name = 'hexagon';
+    this.guiIconGroupBlue.add(hexagonBlue);
+    var circleBlue = this.game.add.sprite(x2, 45 + offsetY * 1, 'sprites', 'circle.png');
+    circleBlue.name = 'circle';
+    this.guiIconGroupBlue.add(circleBlue);
+    var starBlue = this.game.add.sprite(x2, 45 + offsetY * 2, 'sprites', 'star.png');
+    starBlue.name = 'star';
+    this.guiIconGroupBlue.add(starBlue);
+
     var triangleBlueText = this.game.add.text(triangleBlue.x + 25, triangleBlue.y + textOffset, 'x ' + this.blueScores.triangles, scoreTextStyle);
     triangleBlueText.name = "triangle";
     this.guiTextGroupBlue.add(triangleBlueText);
@@ -357,7 +376,6 @@ createGui: function(){
     var pentagonBlueText = this.game.add.text(pentagonBlue.x + 25, pentagonBlue.y + textOffset, 'x ' + this.blueScores.pentagons, scoreTextStyle);
     pentagonBlueText.name = "pentagon";
     this.guiTextGroupBlue.add(pentagonBlueText);
-
     var hexagonBlueText = this.game.add.text(hexagonBlue.x + 25, hexagonBlue.y + textOffset, 'x ' + this.blueScores.hexagons, scoreTextStyle);
     hexagonBlueText.name = "hexagon";
     this.guiTextGroupBlue.add(hexagonBlueText);
@@ -375,62 +393,131 @@ createGui: function(){
     var x4 = 1110;
     var y1 = 700
     var triangleRed = this.game.add.sprite(x3, y1, 'sprites', 'triangle.png');
-    this.guiIconGroup.add(triangleRed);
+    this.guiIconGroupRed.add(triangleRed);
     var squareRed = this.game.add.sprite(x3, y1 + offsetY * 1, 'sprites', 'square.png');
-    this.guiIconGroup.add(squareRed);
+    this.guiIconGroupRed.add(squareRed);
     var pentagonRed = this.game.add.sprite(x3, y1 + offsetY * 2, 'sprites', 'pentagon.png');
-    this.guiIconGroup.add(pentagonRed);
+    this.guiIconGroupRed.add(pentagonRed);
 
     var hexagonRed = this.game.add.sprite(x4, y1 + offsetY * 0, 'sprites', 'hexagon.png');
-    this.guiIconGroup.add(hexagonRed);
+    this.guiIconGroupRed.add(hexagonRed);
     var circleRed = this.game.add.sprite(x4, y1 + offsetY * 1, 'sprites', 'circle.png');
-    this.guiIconGroup.add(circleRed);
+    this.guiIconGroupRed.add(circleRed);
     var starRed = this.game.add.sprite(x4, y1 + offsetY * 2, 'sprites', 'star.png');
-    this.guiIconGroup.add(starRed);
+    this.guiIconGroupRed.add(starRed);
 
     var textOffset = 2;
-    var triangleRedText = this.game.add.text(triangleRed.x + 25, triangleRed.y + textOffset, 'x ' + this.redScores.triangles, scoreTextStyle);
+    var triangleRedText = this.game.add.text(triangleRed.x + 25, triangleRed.y + textOffset, "", scoreTextStyle);
     triangleRedText.name = "triangle";
     this.guiTextGroupRed.add(triangleRedText);
-    var squareRedText = this.game.add.text(squareRed.x + 25, squareRed.y + textOffset, 'x ' + this.redScores.squares, scoreTextStyle);
+    var squareRedText = this.game.add.text(squareRed.x + 25, squareRed.y + textOffset, "", scoreTextStyle);
     squareRedText.name = "square";
     this.guiTextGroupRed.add(squareRedText);
-    var pentagonRedText = this.game.add.text(pentagonRed.x + 25, pentagonRed.y + textOffset, 'x ' + this.redScores.pentagons, scoreTextStyle);
+    var pentagonRedText = this.game.add.text(pentagonRed.x + 25, pentagonRed.y + textOffset, "", scoreTextStyle);
     pentagonRedText.name = "pentagon";
     this.guiTextGroupRed.add(pentagonRedText);
 
-    var hexagonRedText = this.game.add.text(hexagonRed.x + 25, hexagonRed.y + textOffset, 'x ' + this.redScores.hexagons, scoreTextStyle);
+    var hexagonRedText = this.game.add.text(hexagonRed.x + 25, hexagonRed.y + textOffset, "", scoreTextStyle);
     hexagonRedText.name = "hexagon";
     this.guiTextGroupRed.add(hexagonRedText);
-    var circleRedText = this.game.add.text(circleRed.x + 25, circleRed.y + textOffset, 'x ' + this.redScores.circles, scoreTextStyle);
+    var circleRedText = this.game.add.text(circleRed.x + 25, circleRed.y + textOffset, "", scoreTextStyle);
     circleRedText.name = "circle";
     this.guiTextGroupRed.add(circleRedText);
-    var starRedText = this.game.add.text(starRed.x + 25, starRed.y + textOffset, 'x ' + this.redScores.stars, scoreTextStyle);
+    var starRedText = this.game.add.text(starRed.x + 25, starRed.y + textOffset, "", scoreTextStyle);
     starRedText.name = "star";
     this.guiTextGroupRed.add(starRedText);
 
-    this.guiIconGroup.forEach(function(element){
+
+    this.guiIconGroupBlue.forEach(function(element){
         element.anchor.setTo(0.5);
         element.scale.setTo(0.18);
+        element.visible = false;
+    }, this);
+
+     this.guiIconGroupRed.forEach(function(element){
+        element.anchor.setTo(0.5);
+        element.scale.setTo(0.18);
+        element.visible = false;
     }, this);
 
     this.guiTextGroupRed.forEach(function(element){
         element.anchor.setTo(0.5);
+        element.visible = false;
     }, this);
     this.guiTextGroupBlue.forEach(function(element){
         element.anchor.setTo(0.5);
+        element.visible = false;
     }, this);
 
 },
 
-updateScores: function(){
+updateScores: function(player){
+    var textGroup;
+    if(player == 'blue'){
+        textGroup = this.guiTextGroupBlue;
+    
+    //////
+    //BLUE
+    ///////
+    //first row
+    var x1 = 60;
+    var y1 = 45
+    //second row
+    var x2 = 120;
+    //y-offset
+    var offsetY = 25;
+    var textOffset = 2;
+
+    var iconAndTextCoordsBlue = [
+        [{x: x1, y: y1 + offsetY * 0}, {x: x1 + 25, y: y1 + offsetY * 0 + textOffset}],
+        [{x: x1, y: y1 + offsetY * 1}, {x: x1 + 25, y: y1 + offsetY * 1 + textOffset}],
+        [{x: x1, y: y1 + offsetY * 2}, {x: x1 + 25, y: y1 + offsetY * 2 + textOffset}],
+
+        [{x: x2, y: y1 + offsetY * 0}, {x: x2 + 25, y: y1 + offsetY * 0 + textOffset}],
+        [{x: x2, y: y1 + offsetY * 1}, {x: x2 + 25, y: y1 + offsetY * 1 + textOffset}],
+        [{x: x2, y: y1 + offsetY * 2}, {x: x2 + 25, y: y1 + offsetY * 2 + textOffset}],
+        ];
     //update scores
-    this.guiTextGroupBlue.forEach(function(element){
-        element.setText("x " + this.blueScores[element.name + 's']);
+    var sortedArr = [];
+
+    textGroup.forEach(function(element){
+        var score = this.blueScores[element.name + 's']
+        if(score > 0){
+            sortedArr.push({name: element.name, score: score});
+            element.setText("x " + score);
+        }
+        else{
+            element.setText("");
+        }
     }, this);
-    this.guiTextGroupRed.forEach(function(element){
-        element.setText("x " + this.redScores[element.name + 's']);
-    }, this);
+    //sort array
+    sortedArr.sort(function(a, b) {
+        return parseFloat(a.score) - parseFloat(b.score);
+    });
+    var len = sortedArr.length;
+    //give elements correct position from coordinates
+    for(var i=0 ; i < sortedArr.length ; i++){
+        var obj = sortedArr[len - i - 1];
+        //get correct icon and text
+        var iconSprite = this.guiIconGroupBlue.getByName(obj.name);
+        var textSprite = this.guiTextGroupBlue.getByName(obj.name);
+        console.log(iconSprite);
+        iconSprite.visible = true;
+        textSprite.visible = true;
+        iconSprite.x = iconAndTextCoordsBlue[i][0].x;
+        iconSprite.y = iconAndTextCoordsBlue[i][0].y;
+        console.log(iconAndTextCoordsBlue[i][0].y)
+        console.log(iconAndTextCoordsBlue[i][1].y)
+        textSprite.x = iconAndTextCoordsBlue[i][1].x;
+        textSprite.y = iconAndTextCoordsBlue[i][1].y;
+    }
+    /////////
+    //RED
+    /////////
+    // this.guiTextGroupRed.forEach(function(element){
+    //     element.setText("x " + this.redScores[element.name + 's']);
+    // }, this);
+    }
 
 }
 

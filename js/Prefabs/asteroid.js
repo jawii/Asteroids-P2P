@@ -63,13 +63,15 @@ AsteroidMath.Asteroid.prototype.asteroidCollected = function(color){
 	// this.destroy();
 	//add score
 	if(color == 'red'){
-		AsteroidMath.GameState.redScores[this.frameName.slice(0, this.frameName.indexOf('.')) + 's'] += 1
+		AsteroidMath.GameState.redScores[this.frameName.slice(0, this.frameName.indexOf('.')) + 's'] += 1;
+		AsteroidMath.GameState.updateScores('red');
 	}
 	else{
-		AsteroidMath.GameState.blueScores[this.frameName.slice(0, this.frameName.indexOf('.')) + 's'] += 1
+		AsteroidMath.GameState.blueScores[this.frameName.slice(0, this.frameName.indexOf('.')) + 's'] += 1;
+		AsteroidMath.GameState.updateScores('blue');
 	}
 
-	AsteroidMath.GameState.updateScores();
+	
 	//createa aseteroid
 	AsteroidMath.GameState.createRandomAsteroid();
 }
