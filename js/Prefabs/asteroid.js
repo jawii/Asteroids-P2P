@@ -34,6 +34,9 @@ AsteroidMath.Asteroid.prototype.reset = function(x, y, data){
 	this.body.collides([AsteroidMath.GameState.asteroidCollisionGroup, AsteroidMath.GameState.playerCollisionGroup, AsteroidMath.GameState.wallsCollisionGroup]);
 	this.game.physics.p2.setMaterial(AsteroidMath.GameState.asteroidMaterial, [this.body]);
 
+	this.scale.set(0);
+	var startTween = this.game.add.tween(this.scale).to({ x: 0.5, y: 0.5}, 1000, null, true);
+
 	//make sprite appear in the world - tween
 
 	//tint that heavier sprites gets darker
@@ -59,19 +62,26 @@ AsteroidMath.Asteroid.prototype.update = function(){
 };
 
 AsteroidMath.Asteroid.prototype.asteroidCollected = function(color){
-	Phaser.Sprite.prototype.kill.call(this);
-	// this.destroy();
 	//add score
-	if(color == 'red'){
+	this.alive = false;
+
+	//create tween 
+	var killTween = this.game.add.tween(this.scale).to({ x: 0, y: 0}, 1000, null, true);
+	
+	killTween.onComplete.add(function(){
+		Phaser.Sprite.prototype.kill.call(this);
+
+		if(color == 'red'){
 		AsteroidMath.GameState.redScores[this.frameName.slice(0, this.frameName.indexOf('.')) + 's'] += 1;
 		AsteroidMath.GameState.updateScores('red');
-	}
-	else{
-		AsteroidMath.GameState.blueScores[this.frameName.slice(0, this.frameName.indexOf('.')) + 's'] += 1;
-		AsteroidMath.GameState.updateScores('blue');
-	}
+		}
+		else{
+			AsteroidMath.GameState.blueScores[this.frameName.slice(0, this.frameName.indexOf('.')) + 's'] += 1;
+			AsteroidMath.GameState.updateScores('blue');
+		}
+		//createa aseteroid
+		AsteroidMath.GameState.createRandomAsteroid();
+	}, this);
 
 	
-	//createa aseteroid
-	AsteroidMath.GameState.createRandomAsteroid();
 }
