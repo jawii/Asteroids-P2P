@@ -20,13 +20,14 @@ AsteroidMath.Asteroid.prototype.reset = function(x, y, data){
 	Phaser.Sprite.prototype.reset.call(this, x, y);
 
 	this.data = data;
+	this.scaleFactor = AsteroidMath.GameState.assetScaleFactor;
 
 	AsteroidMath.GameState.asteroids.add(this);
 	//create physic shapes
 	this.loadTexture('sprites', this.data.texture + '.png');
 	console.log();
 	this.body.clearShapes();
-	this.scale.set(0.5);
+	this.scale.set(this.scaleFactor);
 	this.body.loadPolygon('physics', this.data.physic);
 	this.body.mass = this.data.mass;
 	//create collision group
@@ -35,7 +36,7 @@ AsteroidMath.Asteroid.prototype.reset = function(x, y, data){
 	this.game.physics.p2.setMaterial(AsteroidMath.GameState.asteroidMaterial, [this.body]);
 
 	this.scale.set(0);
-	var startTween = this.game.add.tween(this.scale).to({ x: 0.5, y: 0.5}, 1000, null, true);
+	var startTween = this.game.add.tween(this.scale).to({ x: this.scaleFactor, y: this.scaleFactor}, 1000, null, true);
 
 	//make sprite appear in the world - tween
 

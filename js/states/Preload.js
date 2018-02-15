@@ -24,6 +24,9 @@ AsteroidMath.PreloadState = {
     this.load.image('4x4_red', 'assets/images/4x4_red.png');
     this.load.image('4x4_blue', 'assets/images/4x4_blue.png');
 
+    //load values
+    this.load.text('values', 'js/data/values.json');
+    
     //emitter
     this.game.load.path = 'assets/images/';
     this.game.load.atlas('colorsHD');

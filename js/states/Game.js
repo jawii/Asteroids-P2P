@@ -9,7 +9,9 @@ AsteroidMath.GameState = {
     // this.SHOOT_FACTOR = 12;
     this.THRUST = 750;
     this.DEBUG = false;
-    this.SHIPMASS = 5;
+    this.SHIPMASS = 2;
+
+    this.assetScaleFactor = 0.25;
 
 
     this.blueData = {
@@ -48,18 +50,34 @@ AsteroidMath.GameState = {
     this.game.physics.startSystem(Phaser.Physics.P2JS);
 
   },
-  create: function() {     
+  create: function() {   
+
+    //GROUPS
+    //walls
+    this.walls = this.add.group();
+    this.walls.enableBody = true;
+    this.walls.physicsBodyType = Phaser.Physics.P2JS;
+
+    //create group for all player collected icons
+    this.guiIconGroupBlue = this.game.add.group();
+    this.guiIconGroupRed = this.game.add.group();
+    this.guiTextGroupBlue = this.game.add.group();
+    this.guiTextGroupRed = this.game.add.group();
+    this.game.world.sendToBack(this.guiIconGroupBlue);
+    this.game.world.sendToBack(this.guiIconGroupRed);
+    this.game.world.sendToBack(this.guiTextGroupBlue);
+    this.game.world.sendToBack(this.guiTextGroupRed);
+
+    //collisiongroups
+    this.playerCollisionGroup = this.game.physics.p2.createCollisionGroup();
+    this.asteroidCollisionGroup = this.game.physics.p2.createCollisionGroup();
+    this.wallsCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
     //set bounds 
     this.game.world.setBounds(0, 0, 1200, 800); 
     //  Turn on impact events for the world, without this we get no collision callbacks
     this.game.physics.p2.setImpactEvents(true);
     this.game.physics.p2.restitution = 0.5;
-
-    //collisiongroups
-    this.playerCollisionGroup = this.game.physics.p2.createCollisionGroup();
-    this.asteroidCollisionGroup = this.game.physics.p2.createCollisionGroup();
-    this.wallsCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
     //  This part is vital if you want the objects with their own collision groups to still collide with the world bounds
     //  (which we do) - what this does is adjust the bounds to use its own collision group.
@@ -70,23 +88,13 @@ AsteroidMath.GameState = {
     // this.game.world.sendToBack(this.sky);
     this.game.stage.backgroundColor = '#000';
 
-    //walls
-    this.walls = this.add.group();
-    this.walls.enableBody = true;
-    this.walls.physicsBodyType = Phaser.Physics.P2JS;
 
-    //gui
-    //create group for all icons
-    this.guiIconGroupBlue = this.game.add.group();
-    this.guiIconGroupRed = this.game.add.group();
-    this.guiTextGroupBlue = this.game.add.group();
-    this.guiTextGroupRed = this.game.add.group();
-    this.game.world.sendToBack(this.guiIconGroupBlue);
-    this.game.world.sendToBack(this.guiIconGroupRed);
-    this.game.world.sendToBack(this.guiTextGroupBlue);
-    this.game.world.sendToBack(this.guiTextGroupRed);
-
-   
+    //JSON PARSE VALUES
+    var valueData = JSON.parse(this.game.cache.getText('values'));
+    console.log(valueData);
+    for (var key of Object.keys(valueData)){
+        console.log(key);
+    }
 
     //Player homeland
     var graphics = this.game.add.graphics(0, 0);
@@ -126,15 +134,15 @@ AsteroidMath.GameState = {
     background.body.collides(this.playerCollisionGroup, null, this);
     this.game.world.sendToBack(background);
 
-    var wall1 = this.game.add.sprite(200, 400, 'sprites', 'wall1.png');
-    this.game.physics.p2.enable(wall1, this.DEBUG);
-    wall1.body.clearShapes();
-    wall1.scale.set(0.5);
-    wall1.body.loadPolygon('physics', 'wall1');
-    wall1.body.static = true;
-    wall1.body.setCollisionGroup(this.wallsCollisionGroup);
-    wall1.body.collides(this.asteroidCollisionGroup, null, this);
-    wall1.body.collides(this.playerCollisionGroup, null, this);
+    // var wall1 = this.game.add.sprite(200, 400, 'sprites', 'wall1.png');
+    // this.game.physics.p2.enable(wall1, this.DEBUG);
+    // wall1.body.clearShapes();
+    // wall1.scale.set(this.assetScaleFactor);
+    // wall1.body.loadPolygon('physics', 'wall1');
+    // wall1.body.static = true;
+    // wall1.body.setCollisionGroup(this.wallsCollisionGroup);
+    // wall1.body.collides(this.asteroidCollisionGroup, null, this);
+    // wall1.body.collides(this.playerCollisionGroup, null, this);
     // background.body.debug = true;
 
 
@@ -159,12 +167,29 @@ AsteroidMath.GameState = {
     this.asteroids = this.add.group();
     this.asteroids.enableBody = true;
     this.asteroids.physicsBodyType = Phaser.Physics.P2JS;
+    //group for geometry piece info 
+    this.missionTable = this.game.add.group();
 
     this.loadLevel();
+    this.createPlayerScoreTables();
+    // this.createMission();
 
-    this.createGui();
-
-
+    //////
+    //testing bitmap sprites
+    /////
+    //circle
+    // var bmd = this.game.add.bitmapData(50, 50);
+    // bmd.ctx.beginPath();
+    // bmd.ctx.rect(0,0,50,50);
+    // bmd.ctx.fillStyle = '#ffffff';
+    // bmd.ctx.fill();
+    // var bitmapSprite = this.game.add.sprite(400, 400, bmd);
+    // AsteroidMath.GameState.asteroids.add(bitmapSprite);
+    // bitmapSprite.body.setCollisionGroup(AsteroidMath.GameState.asteroidCollisionGroup);
+    // bitmapSprite.body.collides([AsteroidMath.GameState.asteroidCollisionGroup, AsteroidMath.GameState.playerCollisionGroup, AsteroidMath.GameState.wallsCollisionGroup]);
+    // bitmapSprite.game.physics.p2.setMaterial(AsteroidMath.GameState.asteroidMaterial, [bitmapSprite.body]);
+    // bitmapSprite.body.debug = true;
+    
 
   },   
   update: function() {  
@@ -179,10 +204,13 @@ AsteroidMath.GameState = {
         this.shipBlue.frameName = 'ship_blue2.png';
         this.shipBlue.body.thrust(this.THRUST);
         var angle = this.shipBlue.body.angle
-        var x = this.shipBlue.x - Math.sin(angle* 0.0174532925) * 25;
-        var y = this.shipBlue.y + Math.cos(angle * 0.0174532925) * 25;
+        var x_angle = - Math.sin(angle* 0.0174532925);
+        var y_angle = Math.cos(angle * 0.0174532925);
+        var x = this.shipBlue.x + x_angle * 25;
+        var y = this.shipBlue.y +  y_angle * 25;
+        this.blueEmitterData.vx = { value: { min: x_angle, max: x_angle * 2} };
+        this.blueEmitterData.vy = { value: { min: y_angle, max: y_angle * 2} };
         this.blueShipEmitter.emit('basic', x, y, { zone: this.blueShipCircle, total: 1 });
-
     }
     else if(this.cursors.down.isDown){this.shipBlue.body.reverse(this.THRUST/2);}
 
@@ -190,13 +218,16 @@ AsteroidMath.GameState = {
     else if(this.shipRedRight.isDown){this.shipRed.body.rotateRight(50);}
     else{this.shipRed.body.setZeroRotation();}
     if(this.shipRedUp.isDown){
-        //animation
         this.shipRed.frameName = 'ship_red2.png';
         this.shipRed.body.thrust(this.THRUST);
         var angle = this.shipRed.body.angle
-        var x = this.shipRed.x - Math.sin(angle* 0.0174532925) * 25;
-        var y = this.shipRed.y + Math.cos(angle * 0.0174532925) * 25;
-        this.redShipEmitter.emit('basic', x, y, { zone: this.redShipCircle, total: 1 });
+        var x_angle = - Math.sin(angle* 0.0174532925);
+        var y_angle = Math.cos(angle * 0.0174532925);
+        var x = this.shipRed.x + x_angle * 25;
+        var y = this.shipRed.y +  y_angle * 25;
+        this.redEmitterData.vx = { value: { min: x_angle, max: x_angle * 2} };
+        this.redEmitterData.vy = { value: { min: y_angle, max: y_angle * 2} };
+        this.redShipEmitter.emit('basic', x, y, { zone: this.blueShipCircle, total: 1 });
     }
     else if(this.shipRedDown.isDown){this.shipRed.body.reverse(this.THRUST/2);}
   },
@@ -206,7 +237,7 @@ AsteroidMath.GameState = {
     this.shipBlue = this.game.add.sprite(this.blueData.spawn.x, this.blueData.spawn.y, 'sprites', 'ship_blue1.png');
     this.game.physics.p2.enable(this.shipBlue, this.DEBUG);
     this.shipBlue.body.clearShapes();
-    this.shipBlue.scale.set(0.5);
+    this.shipBlue.scale.set(this.assetScaleFactor);
     this.shipBlue.body.loadPolygon('physics', 'ship');
     this.shipBlue.body.collideWorldBounds = true;
     this.shipBlue.body.setCollisionGroup(this.playerCollisionGroup);
@@ -221,17 +252,17 @@ AsteroidMath.GameState = {
     //particle storm
     this.blueParticleManager = this.game.plugins.add(Phaser.ParticleStorm);
 
-    var blueEmitterData = {
+    this.blueEmitterData = {
         image: '4x4_blue',
         // frame: ['blue'],
         lifespan: 2000,
         blendMode: 'ADD',
         alpha: { initial: 0, value: 1, control: 'linear' },
-        scale: { value: 1.0, control: [ { x: 0, y: 0.4 }] },
+        scale: { value: 1.0, control: [ { x: 0, y: 0.35 }] },
         sendToBack: true
     };
 
-    this.blueParticleManager.addData('basic', blueEmitterData);
+    this.blueParticleManager.addData('basic', this.blueEmitterData);
     this.blueShipCircle = this.blueParticleManager.createCircleZone(10);
     this.blueShipEmitter = this.blueParticleManager.createEmitter();
     this.blueShipEmitter.addToWorld();
@@ -241,7 +272,7 @@ AsteroidMath.GameState = {
     this.shipRed = this.game.add.sprite(this.redData.spawn.x, this.redData.spawn.y, 'sprites', 'ship_red1.png');
     this.game.physics.p2.enable(this.shipRed, this.DEBUG);
     this.shipRed.body.clearShapes();
-    this.shipRed.scale.set(0.5);
+    this.shipRed.scale.set(this.assetScaleFactor);
     this.shipRed.body.loadPolygon('physics', 'ship');
     this.shipRed.body.collideWorldBounds = true;
     this.shipRed.body.setCollisionGroup(this.playerCollisionGroup);
@@ -254,7 +285,7 @@ AsteroidMath.GameState = {
     this.shipRed.body.debug = this.DEBUG;
     this.redParticleManager = this.game.plugins.add(Phaser.ParticleStorm);
 
-    var redEmitterData = {
+    this.redEmitterData = {
         image: '4x4_red',
         // frame: ['red'],
         lifespan: 2000,
@@ -264,7 +295,7 @@ AsteroidMath.GameState = {
         sendToBack: true
     };
 
-    this.redParticleManager.addData('basic', redEmitterData);
+    this.redParticleManager.addData('basic', this.redEmitterData);
     this.redShipCircle = this.redParticleManager.createCircleZone(10);
     this.redShipEmitter = this.redParticleManager.createEmitter();
     this.redShipEmitter.addToWorld();
@@ -302,7 +333,7 @@ AsteroidMath.GameState = {
     data.texture = this.asteroidTextures[Math.floor(Math.random()*this.asteroidTextures.length)];
     data.physic = data.texture;
     // data.mass = Math.random() * 10;
-    data.mass = 10;
+    data.mass = 3;
     //look for dead element
     var newElement = this.asteroids.getFirstDead();
 
@@ -316,7 +347,7 @@ AsteroidMath.GameState = {
     return newElement;
 }, 
 
-createGui: function(){
+createPlayerScoreTables: function(){
 
     var scoreTextStyle = {
         font: '14px Arial',
@@ -430,13 +461,13 @@ createGui: function(){
 
     this.guiIconGroupBlue.forEach(function(element){
         element.anchor.setTo(0.5);
-        element.scale.setTo(0.18);
+        element.scale.setTo(this.assetScaleFactor / 2);
         element.visible = false;
     }, this);
 
      this.guiIconGroupRed.forEach(function(element){
         element.anchor.setTo(0.5);
-        element.scale.setTo(0.18);
+        element.scale.setTo(this.assetScaleFactor / 2);
         element.visible = false;
     }, this);
 
@@ -515,5 +546,26 @@ updateScores: function(player){
         textSprite.y = iconAndTextCoords[i][1].y;
     }   
 }
+
+// createMission: function(){
+    
+//     var offset = 50;
+//     var x = 500;
+//     var y = 200;
+//     var triangleSprite = this.game.add.sprite(x, y + offset * 0, 'sprites', 'triangle.png');
+//     var squareSprite = this.game.add.sprite(x, y + offset * 1, 'sprites', 'square.png');
+//     var pentagonSprite = this.game.add.sprite(x, y + offset * 2, 'sprites', 'pentagon.png');
+//     var hexagonSprite = this.game.add.sprite(x, y + offset * 3, 'sprites', 'hexagon.png');
+//     var circleSprite = this.game.add.sprite(x, y + offset * 4, 'sprites', 'circle.png');
+//     var starSprite = this.game.add.sprite(x, y + offset * 5, 'sprites', 'star.png');
+
+//     this.missionTable.addMultiple([triangleSprite, squareSprite, pentagonSprite, hexagonSprite, circleSprite, starSprite]);
+    
+//     this.missionTable.forEach(function(sprite){
+//         sprite.anchor.setTo(0.5);
+//         sprite.scale.setTo(this.assetScaleFactor);
+//         // sprite.tint = 2000 * 0x000000;
+//     }, this);
+// }
 
 };
