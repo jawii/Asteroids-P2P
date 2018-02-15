@@ -89,12 +89,10 @@ AsteroidMath.GameState = {
     this.game.stage.backgroundColor = '#000';
 
 
-    //JSON PARSE VALUES
-    var valueData = JSON.parse(this.game.cache.getText('values'));
-    console.log(valueData);
-    for (var key of Object.keys(valueData)){
-        console.log(key);
-    }
+    //JSON PARSE VALUES TO ARRAY
+    this.valueData = Object.values(JSON.parse(this.game.cache.getText('values')));
+    console.log(this.valueData);
+
 
     //Player homeland
     var graphics = this.game.add.graphics(0, 0);
@@ -316,7 +314,7 @@ AsteroidMath.GameState = {
 
   loadLevel: function(){
     //creates 10 asteroids
-    for (var i = 0 ; i < 11 ; i++){
+    for (var i = 0 ; i < 20 ; i++){
         this.createRandomAsteroid();
     }
     
@@ -334,6 +332,7 @@ AsteroidMath.GameState = {
     data.physic = data.texture;
     // data.mass = Math.random() * 10;
     data.mass = 3;
+    data.value = this.valueData[Math.floor(Math.random()* this.valueData.length)]
     //look for dead element
     var newElement = this.asteroids.getFirstDead();
 

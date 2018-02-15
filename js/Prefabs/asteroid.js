@@ -45,6 +45,15 @@ AsteroidMath.Asteroid.prototype.reset = function(x, y, data){
 	// this.tint = (5 - this.data.mass)/10 * 0xFFFFFF;
 
 	// this.massText = this.game.add.text(this.x, this.y, Math.round(this.body.mass));
+
+	var style = {
+		font: '18px Arial',
+		fill: 'white'
+	}
+	console.log(this.height);
+	this.valuetext = this.game.add.text(this.x, this.y, data.value.text, style);
+	this.valuetext.anchor.setTo(0.5);
+
 };
 
 AsteroidMath.Asteroid.prototype.update = function(){
@@ -58,6 +67,9 @@ AsteroidMath.Asteroid.prototype.update = function(){
 		this.asteroidCollected('red');
 	}
 
+	this.valuetext.x = this.x;
+	this.valuetext.y = this.bottom + 10;
+
 	// this.massText.x = this.x;
 	// this.massText.y = this.y;
 };
@@ -70,6 +82,7 @@ AsteroidMath.Asteroid.prototype.asteroidCollected = function(color){
 	var killTween = this.game.add.tween(this.scale).to({ x: 0, y: 0}, 1000, null, true);
 	
 	killTween.onComplete.add(function(){
+		this.valuetext.destroy();
 		Phaser.Sprite.prototype.kill.call(this);
 
 		if(color == 'red'){

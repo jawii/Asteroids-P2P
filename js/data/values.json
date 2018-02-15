@@ -1,7 +1,19 @@
 {
 	"value1": {
-		"text": "8x - 4",
+		"text": "x + 1",
 		"value": "8 * x - 4"
+	},
+	"value2": {
+		"text": "x - 1",
+		"value": "x - 1"
+	},
+	"value3": {
+		"text": "-x + 1",
+		"value": "-x + 1"
+	},
+	"value4": {
+		"text": "-x - 1",
+		"value": "-x - 1"
 	}
 
 }
