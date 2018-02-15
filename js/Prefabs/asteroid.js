@@ -50,28 +50,26 @@ AsteroidMath.Asteroid.prototype.reset = function(x, y, data){
 		font: '18px Arial',
 		fill: 'white'
 	}
-	console.log(this.height);
+	// console.log(this.height);
 	this.valuetext = this.game.add.text(this.x, this.y, data.value.text, style);
 	this.valuetext.anchor.setTo(0.5);
+	this.valuetext.visible = false;
 
 };
 
 AsteroidMath.Asteroid.prototype.update = function(){
 	//check if it's in blue home-area
 	if(this.alive && this.body.x < AsteroidMath.GameState.blueData.homeArea.x2 && this.body.x > AsteroidMath.GameState.blueData.homeArea.x1 && this.body.y < AsteroidMath.GameState.blueData.homeArea.y2 && this.body.y > AsteroidMath.GameState.blueData.homeArea.y1){
-		console.log("blue collected");
+		// console.log("blue collected");
 		this.asteroidCollected('blue');
 	}
 	else if(this.alive && this.body.x < AsteroidMath.GameState.redData.homeArea.x2 && this.body.x > AsteroidMath.GameState.redData.homeArea.x1 && this.body.y < AsteroidMath.GameState.redData.homeArea.y2 && this.body.y > AsteroidMath.GameState.redData.homeArea.y1){
-		console.log("red collected");
+		// console.log("red collected");
 		this.asteroidCollected('red');
 	}
 
 	this.valuetext.x = this.x;
 	this.valuetext.y = this.bottom + 10;
-
-	// this.massText.x = this.x;
-	// this.massText.y = this.y;
 };
 
 AsteroidMath.Asteroid.prototype.asteroidCollected = function(color){
@@ -87,11 +85,15 @@ AsteroidMath.Asteroid.prototype.asteroidCollected = function(color){
 
 		if(color == 'red'){
 		AsteroidMath.GameState.redScores[this.frameName.slice(0, this.frameName.indexOf('.')) + 's'] += 1;
-		AsteroidMath.GameState.updateScores('red');
+		// AsteroidMath.GameState.updateScores('red');
+		AsteroidMath.GameState.updateShipScore('red', this.data.value);
+
+		// AsteroidMath.GameState.blueData.score += this.data.value.value
 		}
 		else{
 			AsteroidMath.GameState.blueScores[this.frameName.slice(0, this.frameName.indexOf('.')) + 's'] += 1;
-			AsteroidMath.GameState.updateScores('blue');
+			// AsteroidMath.GameState.updateScores('blue');
+			AsteroidMath.GameState.updateShipScore('blue', this.data.value);
 		}
 		//createa aseteroid
 		AsteroidMath.GameState.createRandomAsteroid();

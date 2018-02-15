@@ -14,15 +14,24 @@ AsteroidMath.GameState = {
     this.assetScaleFactor = 0.25;
 
 
+    this.levelData = {
+        xValue: 3,
+    }
+
+
     this.blueData = {
       spawn: {x: 150, y: 130},
-      homeArea: {x1: 0, x2: 190, y1: 0, y2: 120},
-      angle: 135
+      homeArea: {x1: 20, x2: 190, y1: 20, y2: 120},
+      angle: 135,
+      score: 0,
+      scoreText: {x: 100, y: 200}
     }
     this.redData = {
       spawn: {x: 1060, y: 550},
-      homeArea: {x1: 1000, x2: 1200, y1: 680, y2: 800},
-      angle: -45
+      homeArea: {x1: 1000, x2: 1200, y1: 660, y2: 780},
+      angle: -45,
+      score: 0,
+      scoreText: {x: 960, y: 600}
     }
 
     this.blueScores = {
@@ -94,6 +103,18 @@ AsteroidMath.GameState = {
     console.log(this.valueData);
 
 
+    //THE X VALUE
+    var style = {
+        font: '20px Arial',
+        fill: 'white'
+    }
+    this.xValueText = this.game.add.text(600, 200, 'x = ' + this.levelData.xValue, style);
+    this.game.world.bringToTop(this.xValueText);
+
+    //player scoreTexts
+    this.redPlayerScoreText = this.game.add.text(this.redData.scoreText.x, this.redData.scoreText.y, this.redData.score, style);
+    this.bluePlayerScoreText = this.game.add.text(this.blueData.scoreText.x, this.blueData.scoreText.y, this.blueData.score, style);
+
     //Player homeland
     var graphics = this.game.add.graphics(0, 0);
     graphics.lineStyle(2, 0x0000FF, 1);
@@ -116,8 +137,6 @@ AsteroidMath.GameState = {
     // var line = blueGravityWellmanager.createLineZone(100, 50, 700, 50);
     // blueGravityEmitter.addToWorld();
     // blueGravityEmitter.emit('basic', 0, 0, { zone: line, total: 2, repeat: -1, frequency: 50 });
-
-
 
     //background
     var background = this.game.add.sprite(this.game.width/2, this.game.height/2, 'background');
@@ -239,7 +258,7 @@ AsteroidMath.GameState = {
     this.shipBlue.body.loadPolygon('physics', 'ship');
     this.shipBlue.body.collideWorldBounds = true;
     this.shipBlue.body.setCollisionGroup(this.playerCollisionGroup);
-    this.shipBlue.body.collides(this.asteroidCollisionGroup, null, this);
+    this.shipBlue.body.collides(this.asteroidCollisionGroup, this.asteroidCollide, this);
     this.shipBlue.body.collides(this.playerCollisionGroup, null, this);
     this.shipBlue.body.collides(this.wallsCollisionGroup, null, this);
     this.shipBlue.body.mass = this.SHIPMASS;
@@ -274,7 +293,7 @@ AsteroidMath.GameState = {
     this.shipRed.body.loadPolygon('physics', 'ship');
     this.shipRed.body.collideWorldBounds = true;
     this.shipRed.body.setCollisionGroup(this.playerCollisionGroup);
-    this.shipRed.body.collides(this.asteroidCollisionGroup, null, this);
+    this.shipRed.body.collides(this.asteroidCollisionGroup, this.asteroidCollide, this);
     this.shipRed.body.collides(this.playerCollisionGroup, null, this);
     this.shipRed.body.collides(this.wallsCollisionGroup, null, this);
     this.shipRed.body.mass = this.SHIPMASS;
@@ -314,7 +333,7 @@ AsteroidMath.GameState = {
 
   loadLevel: function(){
     //creates 10 asteroids
-    for (var i = 0 ; i < 20 ; i++){
+    for (var i = 0 ; i < 11 ; i++){
         this.createRandomAsteroid();
     }
     
@@ -481,7 +500,7 @@ createPlayerScoreTables: function(){
 
 },
 
-updateScores: function(player){
+createPlayerCollectedItemsTable: function(player){
     var textGroup, x1, x2, y1, scoreTable;
 
     var offsetY = 25;
@@ -543,8 +562,64 @@ updateScores: function(player){
         iconSprite.y = iconAndTextCoords[i][0].y;
         textSprite.x = iconAndTextCoords[i][1].x;
         textSprite.y = iconAndTextCoords[i][1].y;
-    }   
-}
+    }
+
+
+},
+
+ asteroidCollide: function(ship, asteroid){
+        asteroid.sprite.valuetext.visible = true;
+        this.game.time.events.add(Phaser.Timer.SECOND * 5, function(){
+            asteroid.sprite.valuetext.visible = false;
+        }, this);
+
+},
+
+    updateShipScore: function(shipColor, valueText){
+        console.log(valueText);
+        var player = (shipColor == 'blue') ? this.blueData : this.redData;
+
+        //convet X from valueText to current text and evaluate it
+        var value = eval(valueText.value.replace('x', this.levelData.xValue));
+
+        //GET MIDDLE of HomeArea and set the valueTextThere
+        var answerStyle = {
+            font: '20px Arial',
+            fill: 'white'
+        }
+        var answerTextWithX = this.game.add.text((player.homeArea.x2 + player.homeArea.x1)/2, (player.homeArea.y2 + player.homeArea.y1)/2, valueText.text, answerStyle);
+        answerTextWithX.anchor.setTo(0.5, 1);
+        answerTextWithX.alpha = 1;
+
+        answerTextWithOutX = this.game.add.text((player.homeArea.x2 + player.homeArea.x1)/2, (player.homeArea.y2 + player.homeArea.y1)/2, valueText.text.replace('x', this.levelData.xValue), answerStyle);
+        answerTextWithOutX.anchor.setTo(0.5, 1);
+        answerTextWithOutX.alpha = 0;
+
+        //tween
+        var tween1 = this.game.add.tween(answerTextWithX).to({alpha: 0}, 500, 'Linear', false);
+        var tween2 = this.game.add.tween(answerTextWithOutX).to({alpha: 1}, 3000, 'Linear', false);
+        tween1.chain(tween2);
+        tween1.start();
+        tween2.onComplete.add(function(){
+            answerTextWithOutX.setText(answerTextWithOutX.text += " = " + value);
+            answerTextWithX.destroy();
+        }, this);
+
+        this.game.time.events.add(Phaser.Timer.SECOND * 6, function(){
+            answerTextWithOutX.destroy();
+            player.score += value;
+            this.bluePlayerScoreText.setText(this.blueData.score);
+            this.redPlayerScoreText.setText(this.redData.score);
+        }, this);
+
+
+
+        
+
+
+
+
+    }
 
 // createMission: function(){
     

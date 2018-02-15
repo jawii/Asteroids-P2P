@@ -1,7 +1,7 @@
 {
 	"value1": {
 		"text": "x + 1",
-		"value": "8 * x - 4"
+		"value": "x + 1"
 	},
 	"value2": {
 		"text": "x - 1",
