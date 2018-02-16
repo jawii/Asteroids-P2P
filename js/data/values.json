@@ -14,6 +14,47 @@
 	"value4": {
 		"text": "-x - 1",
 		"value": "-x - 1"
+	},
+	"value5": {
+		"text": "x^2 - 2",
+		"value": "x*x-2"
+	},
+	"value6": {
+		"text": "x^3 - 4",
+		"value": "x*x*x - 4"
+	},
+	"value7": {
+		"text": "2 - x^2",
+		"value": "2-x*x"
+	},
+	"value8": {
+		"text": "x^1 + 2",
+		"value": "x + 2"
+	},
+	"value9": {
+		"text": "-2 * (-1) * x",
+		"value": "-2 * -1 * x"
+	},
+	"value10": {
+		"text": "-1 * x",
+		"value": "-1 * x"
+	},
+	"value11": {
+		"text": "x + 4",
+		"value": "x + 4"
+	},
+	"value12": {
+		"text": "x - 4",
+		"value": "x - 4"
+	},
+	"value13": {
+		"text": "10 - x",
+		"value": "10 - x"
+	},
+	"value14": {
+		"text": "x + x",
+		"value": "x + x"
 	}
+
 
 }

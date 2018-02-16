@@ -51,7 +51,7 @@ AsteroidMath.Asteroid.prototype.reset = function(x, y, data){
 		fill: 'white'
 	}
 	// console.log(this.height);
-	this.valuetext = this.game.add.text(this.x, this.y, data.value.text, style);
+	this.valuetext = this.game.add.text(this.x, this.y, AsteroidMath.GameState.parseText(data.value.text), style);
 	this.valuetext.anchor.setTo(0.5);
 	this.valuetext.visible = false;
 
@@ -69,7 +69,7 @@ AsteroidMath.Asteroid.prototype.update = function(){
 	}
 
 	this.valuetext.x = this.x;
-	this.valuetext.y = this.bottom + 10;
+	this.valuetext.y = this.bottom + 15;
 };
 
 AsteroidMath.Asteroid.prototype.asteroidCollected = function(color){

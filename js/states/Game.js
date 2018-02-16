@@ -82,6 +82,9 @@ AsteroidMath.GameState = {
     this.asteroidCollisionGroup = this.game.physics.p2.createCollisionGroup();
     this.wallsCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
+    //group for score final amount explain texts
+    this.scoreAnswerRevealTextsBlue = this.game.add.group();
+    this.scoreAnswerRevealTextsRed = this.game.add.group();
     //set bounds 
     this.game.world.setBounds(0, 0, 1200, 800); 
     //  Turn on impact events for the world, without this we get no collision callbacks
@@ -576,32 +579,50 @@ createPlayerCollectedItemsTable: function(player){
 },
 
     updateShipScore: function(shipColor, valueText){
-        console.log(valueText);
+        // console.log(valueText);
         var player = (shipColor == 'blue') ? this.blueData : this.redData;
+        var textGroup = (shipColor == 'blue') ? this.scoreAnswerRevealTextsBlue : this.scoreAnswerRevealTextsRed;
+        
+        //destroy all text if any;
+        textGroup.forEach(function(element){element.destroy();}, this);
 
-        //convet X from valueText to current text and evaluate it
-        var value = eval(valueText.value.replace('x', this.levelData.xValue));
+
+        //convert X from valueText to current text and evaluate it
+        var value = eval(valueText.value.replace(/x/g, this.levelData.xValue));
 
         //GET MIDDLE of HomeArea and set the valueTextThere
         var answerStyle = {
-            font: '20px Arial',
+            font: '22px Arial',
             fill: 'white'
-        }
-        var answerTextWithX = this.game.add.text((player.homeArea.x2 + player.homeArea.x1)/2, (player.homeArea.y2 + player.homeArea.y1)/2, valueText.text, answerStyle);
-        answerTextWithX.anchor.setTo(0.5, 1);
-        answerTextWithX.alpha = 1;
+        };
+        var offsetTextX = -50;
+        var offsetTextY = -20;
 
-        answerTextWithOutX = this.game.add.text((player.homeArea.x2 + player.homeArea.x1)/2, (player.homeArea.y2 + player.homeArea.y1)/2, valueText.text.replace('x', this.levelData.xValue), answerStyle);
-        answerTextWithOutX.anchor.setTo(0.5, 1);
+        var answerTextWithX = this.game.add.text((player.homeArea.x2 + player.homeArea.x1)/2 + offsetTextX, (player.homeArea.y2 + player.homeArea.y1)/2 + offsetTextY, this.parseText(valueText.text), answerStyle);
+        // answerTextWithX.anchor.setTo(1, 0.5);
+        answerTextWithX.alpha = 1;
+        textGroup.add(answerTextWithX);
+
+        answerTextWithOutX = this.game.add.text((player.homeArea.x2 + player.homeArea.x1)/2 + offsetTextX, (player.homeArea.y2 + player.homeArea.y1)/2 + offsetTextY, this.parseText(valueText.text.replace('x', this.levelData.xValue)), answerStyle);
+        // answerTextWithOutX.anchor.setTo(1, 0.5);
         answerTextWithOutX.alpha = 0;
+        textGroup.add(answerTextWithOutX);
 
         //tween
         var tween1 = this.game.add.tween(answerTextWithX).to({alpha: 0}, 500, 'Linear', false);
         var tween2 = this.game.add.tween(answerTextWithOutX).to({alpha: 1}, 3000, 'Linear', false);
-        tween1.chain(tween2);
         tween1.start();
+        tween2.start();
         tween2.onComplete.add(function(){
             answerTextWithOutX.setText(answerTextWithOutX.text += " = " + value);
+            
+            var index = answerTextWithOutX.text.indexOf("=") + 1;
+            if(value > 0){
+                answerTextWithOutX.addColor("green", index);
+            }else{
+                answerTextWithOutX.addColor("red", index);
+            }
+
             answerTextWithX.destroy();
         }, this);
 
@@ -611,35 +632,86 @@ createPlayerCollectedItemsTable: function(player){
             this.bluePlayerScoreText.setText(this.blueData.score);
             this.redPlayerScoreText.setText(this.redData.score);
         }, this);
+    },
 
-
-
-        
-
-
-
-
+parseText: function(text, replace, replacement){
+    var replaceObj = {
+        "^2": '\u{00B2}',
+        "*": '\u{22C5}',
+        "^0": '\u{2070}',
+        "^3": '\u{00B3}',
+        "^4": '\u{2074}',
+        "^6": '\u{2076}',
+        "^1": '\u{00B9}',
+        "^5": '\u{2075}',
+        "1/2": '\u{00BD}',
+        "1/3": '\u{2153}',
+        "1/5": '\u{2155}',
+        "2/3": '\u{2154}',
+        "1/4": '\u{00BC}',
+        ">=:": '\u{2265}',
+        "+-:": '\u{00B1}'
+        }
+    for(var key in replaceObj){
+        // console.log(key);
+        // console.log(replaceObj[key]);
+        while(text.includes(key)){
+            var index = text.indexOf(key);
+            text = text.slice(0, index) + replaceObj[key] + text.slice(index + key.length)
+        }
     }
+    return text
+    
+
+
+    //       var index = text.indexOf();
+    //       text = text.slice(0, index) +  + text.slice(index + 2)
+
+    //       var index = text.indexOf();
+    //       text = text.slice(0, index) +  + text.slice(index + 3)
+
+    //       var index = text.indexOf();
+    //       text = text.slice(0, index) +  + text.slice(index + 3)
+
+    //       var index = text.indexOf();
+    //       text = text.slice(0, index) +  + text.slice(index + 3)
+
+    //       var index = text.indexOf();
+    //       text = text.slice(0, index) +  + text.slice(index + 3)
+
+    //       var index = text.indexOf();
+    //       text = text.slice(0, index) +  + text.slice(index + 3)
+
+    //       var index = text.indexOf("");
+    //       text = text.slice(0, index) +  + text.slice(index + 2)
+
+    //       var index = text.indexOf("");
+    //       text = text.slice(0, index) +  + text.slice(index + 2)
+    //     }
+    //   }
+
+    
+    }
+};
+
 
 // createMission: function(){
-    
-//     var offset = 50;
-//     var x = 500;
-//     var y = 200;
-//     var triangleSprite = this.game.add.sprite(x, y + offset * 0, 'sprites', 'triangle.png');
-//     var squareSprite = this.game.add.sprite(x, y + offset * 1, 'sprites', 'square.png');
-//     var pentagonSprite = this.game.add.sprite(x, y + offset * 2, 'sprites', 'pentagon.png');
-//     var hexagonSprite = this.game.add.sprite(x, y + offset * 3, 'sprites', 'hexagon.png');
-//     var circleSprite = this.game.add.sprite(x, y + offset * 4, 'sprites', 'circle.png');
-//     var starSprite = this.game.add.sprite(x, y + offset * 5, 'sprites', 'star.png');
+        
+    //     var offset = 50;
+    //     var x = 500;
+    //     var y = 200;
+    //     var triangleSprite = this.game.add.sprite(x, y + offset * 0, 'sprites', 'triangle.png');
+    //     var squareSprite = this.game.add.sprite(x, y + offset * 1, 'sprites', 'square.png');
+    //     var pentagonSprite = this.game.add.sprite(x, y + offset * 2, 'sprites', 'pentagon.png');
+    //     var hexagonSprite = this.game.add.sprite(x, y + offset * 3, 'sprites', 'hexagon.png');
+    //     var circleSprite = this.game.add.sprite(x, y + offset * 4, 'sprites', 'circle.png');
+    //     var starSprite = this.game.add.sprite(x, y + offset * 5, 'sprites', 'star.png');
 
-//     this.missionTable.addMultiple([triangleSprite, squareSprite, pentagonSprite, hexagonSprite, circleSprite, starSprite]);
-    
-//     this.missionTable.forEach(function(sprite){
-//         sprite.anchor.setTo(0.5);
-//         sprite.scale.setTo(this.assetScaleFactor);
-//         // sprite.tint = 2000 * 0x000000;
-//     }, this);
-// }
-
-};
+    //     this.missionTable.addMultiple([triangleSprite, squareSprite, pentagonSprite, hexagonSprite, circleSprite, starSprite]);
+        
+    //     this.missionTable.forEach(function(sprite){
+    //         sprite.anchor.setTo(0.5);
+    //         sprite.scale.setTo(this.assetScaleFactor);
+    //         // sprite.tint = 2000 * 0x000000;
+    //     }, this);
+    // }
