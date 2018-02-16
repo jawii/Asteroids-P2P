@@ -17,15 +17,15 @@
 	},
 	"value5": {
 		"text": "x^2 - 2",
-		"value": "x*x-2"
+		"value": "x * x - 2"
 	},
 	"value6": {
 		"text": "x^3 - 4",
-		"value": "x*x*x - 4"
+		"value": "x * x * x - 4"
 	},
 	"value7": {
 		"text": "2 - x^2",
-		"value": "2-x*x"
+		"value": "2 - x * x"
 	},
 	"value8": {
 		"text": "x^1 + 2",
@@ -33,7 +33,7 @@
 	},
 	"value9": {
 		"text": "-2 * (-1) * x",
-		"value": "-2 * -1 * x"
+		"value": "-2 * (-1) * x"
 	},
 	"value10": {
 		"text": "-1 * x",
@@ -54,7 +54,33 @@
 	"value14": {
 		"text": "x + x",
 		"value": "x + x"
+	},
+	"value15": {
+		"text": "2x + 1",
+		"value": "2 * x + 1"
+	},
+	"value16": {
+		"text": "2x - 1",
+		"value": "2 * x + 1"
+	},
+	"value17": {
+		"text": "-2x + 1",
+		"value": "-2 * x + 1"
+	},
+	"value18": {
+		"text": "-2x - 1",
+		"value": "-2 * x - 1"
+	},
+	"value19": {
+		"text": "3x - 5",
+		"value": "3 * x - 5"
+	},
+	"value20": {
+		"text": "3x - 10",
+		"value": "3 * x - 10"
 	}
+
+
 
 
 }

@@ -22,6 +22,8 @@ AsteroidMath.GameState = {
     this.blueData = {
       spawn: {x: 150, y: 130},
       homeArea: {x1: 20, x2: 190, y1: 20, y2: 120},
+      getWidth: function(){return this.homeArea.x2 - this.homeArea.x1},
+      getHeight: function(){return this.homeArea.y2 - this.homeArea.y1},
       angle: 135,
       score: 0,
       scoreText: {x: 100, y: 200}
@@ -29,6 +31,8 @@ AsteroidMath.GameState = {
     this.redData = {
       spawn: {x: 1060, y: 550},
       homeArea: {x1: 1000, x2: 1200, y1: 660, y2: 780},
+      getWidth: function(){return this.homeArea.x2 - this.homeArea.x1},
+      getHeight: function(){return this.homeArea.y2 - this.homeArea.y1},
       angle: -45,
       score: 0,
       scoreText: {x: 960, y: 600}
@@ -148,7 +152,7 @@ AsteroidMath.GameState = {
     background.scale.set(0.5);
     background.body.loadPolygon('physics', 'background');
     background.body.static = true;
-    console.log(background.body.y);
+    // console.log(background.body.y);
     background.body.setCollisionGroup(this.wallsCollisionGroup);
     background.body.collides(this.asteroidCollisionGroup, null, this);
     background.body.collides(this.playerCollisionGroup, null, this);
@@ -212,7 +216,7 @@ AsteroidMath.GameState = {
     
 
   },   
-  update: function() {  
+update: function() {  
     //reset ship frames
     this.shipRed.frameName = 'ship_red1.png'
     this.shipBlue.frameName = 'ship_blue1.png'
@@ -343,10 +347,10 @@ AsteroidMath.GameState = {
 
   },
 
-    createRandomAsteroid: function(){
+   createRandomAsteroid: function(){
     //create random place in game area
-    var x = this.game.rnd.integerInRange(0, this.game.width);
-    var y = this.game.rnd.integerInRange(0, this.game.height);
+    var x = this.game.rnd.integerInRange(150, this.game.width - 150);
+    var y = this.game.rnd.integerInRange(150, this.game.height - 150);
 
     //check if x and y dont overlap with walls
     var data = {}
@@ -578,61 +582,74 @@ createPlayerCollectedItemsTable: function(player){
 
 },
 
-    updateShipScore: function(shipColor, valueText){
-        // console.log(valueText);
-        var player = (shipColor == 'blue') ? this.blueData : this.redData;
-        var textGroup = (shipColor == 'blue') ? this.scoreAnswerRevealTextsBlue : this.scoreAnswerRevealTextsRed;
+updateShipScore: function(shipColor, valueText){
+    // console.log(valueText);
+    var player = (shipColor == 'blue') ? this.blueData : this.redData;
+    var textGroup = (shipColor == 'blue') ? this.scoreAnswerRevealTextsBlue : this.scoreAnswerRevealTextsRed;
+    
+    //destroy all text if any;
+    textGroup.forEach(function(element){element.destroy();}, this);
+
+
+    //convert X from valueText to current text and evaluate it
+    var value = eval(valueText.value.replace(/x/g, this.levelData.xValue));
+
+    var textWithX = this.parseText(valueText.value)
+    var textWithoutX = this.parseText(valueText.value.replace(/x/g, this.levelData.xValue))
+    var textWithAnswer = textWithoutX + " = " + value
+    console.log(textWithAnswer);
+
+    //GET MIDDLE of HomeArea and set the valueTextThere
+    var answerStyle = {
+        font: '22px Arial',
+        fill: 'white'
+    };
+    var marginalX = 10;
+    var offsetTextY = -10;
+
+    var dummyText = this.game.add.text(0, 0, textWithAnswer, answerStyle);
+    var textWidth = dummyText.width;
+    dummyText.destroy();
+
+    var textX = player.homeArea.x1 + (player.getWidth() - textWidth)/2;
+    var textY = (player.homeArea.y2 + player.homeArea.y1)/2 + offsetTextY
+    console.log(textWidth);
+
+    var answerTextWithX = this.game.add.text(textX, textY, textWithX, answerStyle);
+    // answerTextWithX.anchor.setTo(1, 0.5);
+    answerTextWithX.alpha = 1;
+    textGroup.add(answerTextWithX);
+
+    answerTextWithOutX = this.game.add.text(textX, textY, textWithoutX, answerStyle);
+    // answerTextWithOutX.anchor.setTo(1, 0.5);
+    answerTextWithOutX.alpha = 0;
+    textGroup.add(answerTextWithOutX);
+
+    //tween
+    var tween1 = this.game.add.tween(answerTextWithX).to({alpha: 0}, 500, 'Linear', false);
+    var tween2 = this.game.add.tween(answerTextWithOutX).to({alpha: 1}, 1500, 'Linear', false);
+    tween1.start();
+    tween2.start();
+    tween2.onComplete.add(function(){
+        answerTextWithOutX.setText(textWithAnswer);
         
-        //destroy all text if any;
-        textGroup.forEach(function(element){element.destroy();}, this);
+        var index = answerTextWithOutX.text.indexOf("=") + 1;
+        if(value > 0){
+            answerTextWithOutX.addColor("green", index);
+        }else{
+            answerTextWithOutX.addColor("red", index);
+        }
 
+        answerTextWithX.destroy();
+    }, this);
 
-        //convert X from valueText to current text and evaluate it
-        var value = eval(valueText.value.replace(/x/g, this.levelData.xValue));
-
-        //GET MIDDLE of HomeArea and set the valueTextThere
-        var answerStyle = {
-            font: '22px Arial',
-            fill: 'white'
-        };
-        var offsetTextX = -50;
-        var offsetTextY = -20;
-
-        var answerTextWithX = this.game.add.text((player.homeArea.x2 + player.homeArea.x1)/2 + offsetTextX, (player.homeArea.y2 + player.homeArea.y1)/2 + offsetTextY, this.parseText(valueText.text), answerStyle);
-        // answerTextWithX.anchor.setTo(1, 0.5);
-        answerTextWithX.alpha = 1;
-        textGroup.add(answerTextWithX);
-
-        answerTextWithOutX = this.game.add.text((player.homeArea.x2 + player.homeArea.x1)/2 + offsetTextX, (player.homeArea.y2 + player.homeArea.y1)/2 + offsetTextY, this.parseText(valueText.text.replace('x', this.levelData.xValue)), answerStyle);
-        // answerTextWithOutX.anchor.setTo(1, 0.5);
-        answerTextWithOutX.alpha = 0;
-        textGroup.add(answerTextWithOutX);
-
-        //tween
-        var tween1 = this.game.add.tween(answerTextWithX).to({alpha: 0}, 500, 'Linear', false);
-        var tween2 = this.game.add.tween(answerTextWithOutX).to({alpha: 1}, 3000, 'Linear', false);
-        tween1.start();
-        tween2.start();
-        tween2.onComplete.add(function(){
-            answerTextWithOutX.setText(answerTextWithOutX.text += " = " + value);
-            
-            var index = answerTextWithOutX.text.indexOf("=") + 1;
-            if(value > 0){
-                answerTextWithOutX.addColor("green", index);
-            }else{
-                answerTextWithOutX.addColor("red", index);
-            }
-
-            answerTextWithX.destroy();
-        }, this);
-
-        this.game.time.events.add(Phaser.Timer.SECOND * 6, function(){
-            answerTextWithOutX.destroy();
-            player.score += value;
-            this.bluePlayerScoreText.setText(this.blueData.score);
-            this.redPlayerScoreText.setText(this.redData.score);
-        }, this);
-    },
+    this.game.time.events.add(Phaser.Timer.SECOND * 3, function(){
+        answerTextWithOutX.destroy();
+        player.score += value;
+        this.bluePlayerScoreText.setText(this.blueData.score);
+        this.redPlayerScoreText.setText(this.redData.score);
+    }, this);
+},
 
 parseText: function(text, replace, replacement){
     var replaceObj = {
