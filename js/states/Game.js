@@ -2,7 +2,7 @@ var AsteroidMath = AsteroidMath || {};
 
 AsteroidMath.GameState = {
 
-  init: function(currentLevel) {    
+init: function(currentLevel) {    
     //constants
     // this.MAX_DISTANCE_SHOOT = 190;
     // this.MAX_SPEED_SHOOT = 1000;
@@ -55,7 +55,7 @@ AsteroidMath.GameState = {
         triangles: 0
     }
 
-    this.asteroidTextures = ['circle', 'hexagon', 'pentagon', 'square', 'star', 'triangle'];
+    this.colors = ['0x7AC943', '0x338D91'];
     //keep track of the current level
     this.currentLevel = currentLevel ? currentLevel : 'level1';
 
@@ -63,7 +63,7 @@ AsteroidMath.GameState = {
     this.game.physics.startSystem(Phaser.Physics.P2JS);
 
   },
-  create: function() {   
+create: function() {   
 
     //GROUPS
     //walls
@@ -195,7 +195,6 @@ AsteroidMath.GameState = {
     this.missionTable = this.game.add.group();
 
     this.loadLevel();
-    this.createPlayerScoreTables();
     // this.createMission();
 
     //////
@@ -216,6 +215,7 @@ AsteroidMath.GameState = {
     
 
   },   
+
 update: function() {  
     //reset ship frames
     this.shipRed.frameName = 'ship_red1.png'
@@ -256,7 +256,7 @@ update: function() {
     else if(this.shipRedDown.isDown){this.shipRed.body.reverse(this.THRUST/2);}
   },
 
-  createShips: function(){
+createShips: function(){
     //BLUESHIP
     this.shipBlue = this.game.add.sprite(this.blueData.spawn.x, this.blueData.spawn.y, 'sprites', 'ship_blue1.png');
     this.game.physics.p2.enable(this.shipBlue, this.DEBUG);
@@ -334,11 +334,11 @@ update: function() {
     // this.redFire = this.game.input.keyboard.addKey(Phaser.Keyboard.Q);
   },
 
-  gameOver: function() {
+gameOver: function() {
     this.game.state.start('Game', true, false, this.currentLevel);
   },
 
-  loadLevel: function(){
+loadLevel: function(){
     //creates 10 asteroids
     for (var i = 0 ; i < 11 ; i++){
         this.createRandomAsteroid();
@@ -347,17 +347,17 @@ update: function() {
 
   },
 
-   createRandomAsteroid: function(){
+createRandomAsteroid: function(){
     //create random place in game area
     var x = this.game.rnd.integerInRange(150, this.game.width - 150);
     var y = this.game.rnd.integerInRange(150, this.game.height - 150);
 
     //check if x and y dont overlap with walls
     var data = {}
-    data.texture = this.asteroidTextures[Math.floor(Math.random()*this.asteroidTextures.length)];
+    data.color = this.colors[Math.floor(Math.random()*this.colors.length)];
     data.physic = data.texture;
     // data.mass = Math.random() * 10;
-    data.mass = 3;
+    data.mass = 1;
     data.value = this.valueData[Math.floor(Math.random()* this.valueData.length)]
     //look for dead element
     var newElement = this.asteroids.getFirstDead();
@@ -372,216 +372,13 @@ update: function() {
     return newElement;
 }, 
 
-createPlayerScoreTables: function(){
-
-    var scoreTextStyle = {
-        font: '14px Arial',
-        fill: 'white'
-    };
-  
-    //ICONS
-    //blue player
-    //first row
-    var x1 = 60;
-    var y1 = 45
-    //second row
-    var x2 = 120;
-    //y-offset
-    var offsetY = 25;
-    var textOffset = 2;
-
-    var iconAndTextCoordsBlue = [
-        [{x: x1, y: y1 + offsetY * 0}, {x: x1 + 25, y: offsetY * 0 + textOffset}],
-        [{x: x1, y: y1 + offsetY * 1}, {x: x1 + 25, y: offsetY * 1 + textOffset}],
-        [{x: x1, y: y1 + offsetY * 2}, {x: x1 + 25, y: offsetY * 2 + textOffset}],
-
-        [{x: x2, y: y1 + offsetY * 0}, {x: x1 + 25, y: offsetY * 0 + textOffset}],
-        [{x: x2, y: y1 + offsetY * 1}, {x: x1 + 25, y: offsetY * 0 + textOffset}],
-        [{x: x2, y: y1 + offsetY * 2}, {x: x1 + 25, y: offsetY * 0 + textOffset}],
-        ];
-    
-    var triangleBlue = this.game.add.sprite(iconAndTextCoordsBlue[0][0].x, 45, 'sprites', 'triangle.png');
-    triangleBlue.name = "triangle";
-    this.guiIconGroupBlue.add(triangleBlue);
-    var squareBlue = this.game.add.sprite(x1, 45 + offsetY * 1, 'sprites', 'square.png');
-    squareBlue.name = "square";
-    this.guiIconGroupBlue.add(squareBlue);
-    var pentagonBlue = this.game.add.sprite(x1, 45 + offsetY * 2, 'sprites', 'pentagon.png');
-    pentagonBlue.name = 'pentagon';
-    this.guiIconGroupBlue.add(pentagonBlue);
-    var hexagonBlue = this.game.add.sprite(x2, 45 + offsetY * 0, 'sprites', 'hexagon.png');
-    hexagonBlue.name = 'hexagon';
-    this.guiIconGroupBlue.add(hexagonBlue);
-    var circleBlue = this.game.add.sprite(x2, 45 + offsetY * 1, 'sprites', 'circle.png');
-    circleBlue.name = 'circle';
-    this.guiIconGroupBlue.add(circleBlue);
-    var starBlue = this.game.add.sprite(x2, 45 + offsetY * 2, 'sprites', 'star.png');
-    starBlue.name = 'star';
-    this.guiIconGroupBlue.add(starBlue);
-
-    var triangleBlueText = this.game.add.text(triangleBlue.x + 25, triangleBlue.y + textOffset, 'x ' + this.blueScores.triangles, scoreTextStyle);
-    triangleBlueText.name = "triangle";
-    this.guiTextGroupBlue.add(triangleBlueText);
-    var squareBlueText = this.game.add.text(squareBlue.x + 25, squareBlue.y + textOffset, 'x ' + this.blueScores.squares, scoreTextStyle);
-    squareBlueText.name = "square";
-    this.guiTextGroupBlue.add(squareBlueText);
-    var pentagonBlueText = this.game.add.text(pentagonBlue.x + 25, pentagonBlue.y + textOffset, 'x ' + this.blueScores.pentagons, scoreTextStyle);
-    pentagonBlueText.name = "pentagon";
-    this.guiTextGroupBlue.add(pentagonBlueText);
-    var hexagonBlueText = this.game.add.text(hexagonBlue.x + 25, hexagonBlue.y + textOffset, 'x ' + this.blueScores.hexagons, scoreTextStyle);
-    hexagonBlueText.name = "hexagon";
-    this.guiTextGroupBlue.add(hexagonBlueText);
-    var circleBlueText = this.game.add.text(circleBlue.x + 25, circleBlue.y + textOffset, 'x ' + this.blueScores.circles, scoreTextStyle);
-    circleBlueText.name = "circle"
-    this.guiTextGroupBlue.add(circleBlueText);
-    var starBlueText = this.game.add.text(starBlue.x + 25, starBlue.y + textOffset, 'x ' + this.blueScores.stars, scoreTextStyle);
-    starBlueText.name = "star"
-    this.guiTextGroupBlue.add(starBlueText);
-
-    //RED
-    var x1 = 1050;
-    var y1 = 700
-    var x2 = 1110;
-    var triangleRed = this.game.add.sprite(x1, y1, 'sprites', 'triangle.png');
-    triangleRed.name = "triangle";
-    this.guiIconGroupRed.add(triangleRed);
-    var squareRed = this.game.add.sprite(x1, y1 + offsetY * 1, 'sprites', 'square.png');
-    squareRed.name = "square";
-    this.guiIconGroupRed.add(squareRed);
-    var pentagonRed = this.game.add.sprite(x1, y1 + offsetY * 2, 'sprites', 'pentagon.png');
-    pentagonRed.name = "pentagon";
-    this.guiIconGroupRed.add(pentagonRed);
-
-    var hexagonRed = this.game.add.sprite(x2, y1 + offsetY * 0, 'sprites', 'hexagon.png');
-    hexagonRed.name = "hexagon";
-    this.guiIconGroupRed.add(hexagonRed);
-    var circleRed = this.game.add.sprite(x2, y1 + offsetY * 1, 'sprites', 'circle.png');
-    circleRed.name = "circle";
-    this.guiIconGroupRed.add(circleRed);
-    var starRed = this.game.add.sprite(x2, y1 + offsetY * 2, 'sprites', 'star.png');
-    starRed.name = "star";
-    this.guiIconGroupRed.add(starRed);
-
-    var textOffset = 2;
-    var triangleRedText = this.game.add.text(triangleRed.x + 25, triangleRed.y + textOffset, "", scoreTextStyle);
-    triangleRedText.name = "triangle";
-    this.guiTextGroupRed.add(triangleRedText);
-    var squareRedText = this.game.add.text(squareRed.x + 25, squareRed.y + textOffset, "", scoreTextStyle);
-    squareRedText.name = "square";
-    this.guiTextGroupRed.add(squareRedText);
-    var pentagonRedText = this.game.add.text(pentagonRed.x + 25, pentagonRed.y + textOffset, "", scoreTextStyle);
-    pentagonRedText.name = "pentagon";
-    this.guiTextGroupRed.add(pentagonRedText);
-
-    var hexagonRedText = this.game.add.text(hexagonRed.x + 25, hexagonRed.y + textOffset, "", scoreTextStyle);
-    hexagonRedText.name = "hexagon";
-    this.guiTextGroupRed.add(hexagonRedText);
-    var circleRedText = this.game.add.text(circleRed.x + 25, circleRed.y + textOffset, "", scoreTextStyle);
-    circleRedText.name = "circle";
-    this.guiTextGroupRed.add(circleRedText);
-    var starRedText = this.game.add.text(starRed.x + 25, starRed.y + textOffset, "", scoreTextStyle);
-    starRedText.name = "star";
-    this.guiTextGroupRed.add(starRedText);
-
-
-    this.guiIconGroupBlue.forEach(function(element){
-        element.anchor.setTo(0.5);
-        element.scale.setTo(this.assetScaleFactor / 2);
-        element.visible = false;
-    }, this);
-
-     this.guiIconGroupRed.forEach(function(element){
-        element.anchor.setTo(0.5);
-        element.scale.setTo(this.assetScaleFactor / 2);
-        element.visible = false;
-    }, this);
-
-    this.guiTextGroupRed.forEach(function(element){
-        element.anchor.setTo(0.5);
-        element.visible = false;
-    }, this);
-    this.guiTextGroupBlue.forEach(function(element){
-        element.anchor.setTo(0.5);
-        element.visible = false;
-    }, this);
-
-},
-
-createPlayerCollectedItemsTable: function(player){
-    var textGroup, x1, x2, y1, scoreTable;
-
-    var offsetY = 25;
-    var textOffset = 2;
-
-    if(player == 'blue'){
-        textGroup = this.guiTextGroupBlue;
-        iconGroup = this.guiIconGroupBlue;
-        scoreTable = this.blueScores;
-        x1 = 60;
-        x2 = 120;
-        y1 = 45;
-    }
-    else if(player == 'red'){
-        textGroup = this.guiTextGroupRed;
-        iconGroup = this.guiIconGroupRed;
-        scoreTable = this.redScores;
-        x1 = 1050;
-        x2 = 1110;
-        y1 = 700;
-    }
-
-    var iconAndTextCoords = [
-        [{x: x1, y: y1 + offsetY * 0}, {x: x1 + 25, y: y1 + offsetY * 0 + textOffset}],
-        [{x: x1, y: y1 + offsetY * 1}, {x: x1 + 25, y: y1 + offsetY * 1 + textOffset}],
-        [{x: x1, y: y1 + offsetY * 2}, {x: x1 + 25, y: y1 + offsetY * 2 + textOffset}],
-
-        [{x: x2, y: y1 + offsetY * 0}, {x: x2 + 25, y: y1 + offsetY * 0 + textOffset}],
-        [{x: x2, y: y1 + offsetY * 1}, {x: x2 + 25, y: y1 + offsetY * 1 + textOffset}],
-        [{x: x2, y: y1 + offsetY * 2}, {x: x2 + 25, y: y1 + offsetY * 2 + textOffset}],
-        ];
-    //update scores
-    var sortedArr = [];
-
-    textGroup.forEach(function(element){
-        var score = scoreTable[element.name + 's']
-        if(score > 0){
-            sortedArr.push({name: element.name, score: score});
-            element.setText("x " + score);
-        }
-        else{
-            element.setText("");
-        }
-    }, this);
-    //sort array
-    sortedArr.sort(function(a, b) {
-        return parseFloat(a.score) - parseFloat(b.score);
-    });
-    var len = sortedArr.length;
-    //give elements correct position from coordinates
-    for(var i=0 ; i < sortedArr.length ; i++){
-        var obj = sortedArr[len - i - 1];
-        //get correct icon and text
-        var iconSprite = iconGroup.getByName(obj.name);
-        var textSprite = textGroup.getByName(obj.name);
-        iconSprite.visible = true;
-        textSprite.visible = true;
-        iconSprite.x = iconAndTextCoords[i][0].x;
-        iconSprite.y = iconAndTextCoords[i][0].y;
-        textSprite.x = iconAndTextCoords[i][1].x;
-        textSprite.y = iconAndTextCoords[i][1].y;
-    }
-
-
-},
-
- asteroidCollide: function(ship, asteroid){
+asteroidCollide: function(ship, asteroid){
         asteroid.sprite.valuetext.visible = true;
         this.game.time.events.add(Phaser.Timer.SECOND * 5, function(){
             asteroid.sprite.valuetext.visible = false;
         }, this);
 
 },
-
 updateShipScore: function(shipColor, valueText){
     // console.log(valueText);
     var player = (shipColor == 'blue') ? this.blueData : this.redData;
@@ -648,6 +445,9 @@ updateShipScore: function(shipColor, valueText){
         player.score += value;
         this.bluePlayerScoreText.setText(this.blueData.score);
         this.redPlayerScoreText.setText(this.redData.score);
+        textGroup.forEach(function(text){
+            text.destroy();
+        }, this);
     }, this);
 },
 
@@ -678,36 +478,6 @@ parseText: function(text, replace, replacement){
         }
     }
     return text
-    
-
-
-    //       var index = text.indexOf();
-    //       text = text.slice(0, index) +  + text.slice(index + 2)
-
-    //       var index = text.indexOf();
-    //       text = text.slice(0, index) +  + text.slice(index + 3)
-
-    //       var index = text.indexOf();
-    //       text = text.slice(0, index) +  + text.slice(index + 3)
-
-    //       var index = text.indexOf();
-    //       text = text.slice(0, index) +  + text.slice(index + 3)
-
-    //       var index = text.indexOf();
-    //       text = text.slice(0, index) +  + text.slice(index + 3)
-
-    //       var index = text.indexOf();
-    //       text = text.slice(0, index) +  + text.slice(index + 3)
-
-    //       var index = text.indexOf("");
-    //       text = text.slice(0, index) +  + text.slice(index + 2)
-
-    //       var index = text.indexOf("");
-    //       text = text.slice(0, index) +  + text.slice(index + 2)
-    //     }
-    //   }
-
-    
     }
 };
 
