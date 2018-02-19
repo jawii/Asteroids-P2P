@@ -22,7 +22,7 @@ init: function(currentLevel) {
 
     this.blueData = {
       spawn: {x: 150, y: 130},
-      homeArea: {x1: 20, x2: 190, y1: 20, y2: 120},
+      homeArea: {x1: 25, x2: 220, y1: 25, y2: 125},
       getWidth: function(){return this.homeArea.x2 - this.homeArea.x1},
       getHeight: function(){return this.homeArea.y2 - this.homeArea.y1},
       angle: 135,
@@ -110,7 +110,7 @@ create: function() {
 
     //JSON PARSE VALUES TO ARRAY
     this.valueData = Object.values(JSON.parse(this.game.cache.getText('values')));
-    console.log(this.valueData);
+    // console.log(this.valueData);
 
 
     
@@ -374,7 +374,6 @@ createBackground: function(){
     wall3.body.collides(this.playerCollisionGroup, null, this);
 },
 
-
 loadLevel: function(){
     //creates 10 asteroids
     for (var i = 0 ; i < 16 ; i++){
@@ -517,7 +516,20 @@ parseText: function(text, replace, replacement){
         }
     }
     return text
+},
+testTasks: function(){
+    var valueData = Object.values(JSON.parse(this.game.cache.getText('values')));
+    var x = -1
+    for (var i = 0 ; i < valueData.length ; i++){
+        eval(valueData[i].valueNeg.replace(/x/g, x));
     }
+
+    var x = 1
+    for (var i = 0 ; i < valueData.length ; i++){
+        eval(valueData[i].valueNeg.replace(/x/g, x));
+    }
+    
+}
 };
 
 

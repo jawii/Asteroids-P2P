@@ -17,7 +17,7 @@
 	"value4": {
 		"text": "-x - 1",
 		"value": "-x - 1",
-		"valueNeg": "-(x) - 1"
+		"valueNeg": "- (x) - 1"
 	},
 	"value5": {
 		"text": "x^2 - 2",
@@ -32,7 +32,7 @@
 	"value7": {
 		"text": "2 - x^2",
 		"value": "2 - x * x",
-		"valueNeg": "2 - x * (x)"
+		"valueNeg": "2 - (x) * (x)"
 	},
 	"value8": {
 		"text": "x^1 + 2",
@@ -99,8 +99,4 @@
 		"value": "3 * x - 10",
 		"valueNeg": "3 * (x) - 10"
 	}
-
-
-
-
 }
