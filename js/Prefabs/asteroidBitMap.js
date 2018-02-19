@@ -2,7 +2,7 @@ var AsteroidMath = AsteroidMath || {};
 
 AsteroidMath.Asteroid = function(state, x, y, data){
 
-	Phaser.Sprite.call(this, state.game, x, y, 'sprites', data.texture + '.png');
+	Phaser.Sprite.call(this, state.game, x, y, null);
 
 	this.state = state;
 	this.game = state.game;
@@ -40,10 +40,13 @@ AsteroidMath.Asteroid.prototype.reset = function(x, y, data){
 	this.body.collides([AsteroidMath.GameState.asteroidCollisionGroup, AsteroidMath.GameState.playerCollisionGroup, AsteroidMath.GameState.wallsCollisionGroup]);
 	this.game.physics.p2.setMaterial(AsteroidMath.GameState.asteroidMaterial, [this.body]);
 
-	// this.scale.set(0);
-	// var startTween = this.game.add.tween(this.scale).to({ x: 1, y: 1}, 1000, null, true);
-
+	this.scale.set(0);
+	var startTween = this.game.add.tween(this.scale).to({ x: 1, y: 1}, 1000, null, true);
 	//make sprite appear in the world - tween
+
+	var rnd = Math.random();
+	this.alpha = rnd;
+	this.body.mass = rnd * 2;
 
 	//tint that heavier sprites gets darker
 	// this.tint = 0xFFFFFF
@@ -61,12 +64,14 @@ AsteroidMath.Asteroid.prototype.reset = function(x, y, data){
 
 AsteroidMath.Asteroid.prototype.update = function(){
 	//check if it's in blue home-area
-	if(this.alive && this.body.x < AsteroidMath.GameState.blueData.homeArea.x2 && this.body.x > AsteroidMath.GameState.blueData.homeArea.x1 && this.body.y < AsteroidMath.GameState.blueData.homeArea.y2 && this.body.y > AsteroidMath.GameState.blueData.homeArea.y1){
+	if(!AsteroidMath.GameState.blueData.collecting && this.alive && this.body.x < AsteroidMath.GameState.blueData.homeArea.x2 && this.body.x > AsteroidMath.GameState.blueData.homeArea.x1 && this.body.y < AsteroidMath.GameState.blueData.homeArea.y2 && this.body.y > AsteroidMath.GameState.blueData.homeArea.y1){
 		// console.log("blue collected");
+		AsteroidMath.GameState.blueData.collecting = true;
 		this.asteroidCollected('blue');
 	}
-	else if(this.alive && this.body.x < AsteroidMath.GameState.redData.homeArea.x2 && this.body.x > AsteroidMath.GameState.redData.homeArea.x1 && this.body.y < AsteroidMath.GameState.redData.homeArea.y2 && this.body.y > AsteroidMath.GameState.redData.homeArea.y1){
+	else if(!AsteroidMath.GameState.redData.collecting && this.alive && this.body.x < AsteroidMath.GameState.redData.homeArea.x2 && this.body.x > AsteroidMath.GameState.redData.homeArea.x1 && this.body.y < AsteroidMath.GameState.redData.homeArea.y2 && this.body.y > AsteroidMath.GameState.redData.homeArea.y1){
 		// console.log("red collected");
+		AsteroidMath.GameState.redData.collecting = true;
 		this.asteroidCollected('red');
 	}
 

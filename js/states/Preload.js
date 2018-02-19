@@ -12,9 +12,12 @@ AsteroidMath.PreloadState = {
     //textures   
     this.load.image('sky', 'assets/images/sky.png');
 
-    //floors
+    //floors and walls
     this.load.image('background', 'assets/images/background.png')
     // this.load.image('corners', 'assets/images/gamearea.png');
+    this.load.image('wall1', 'assets/images/wall1.png');
+    this.load.image('wall2', 'assets/images/wall2.png');
+    this.load.image('wall3', 'assets/images/wall3.png');
     
     //ships
     this.game.load.atlasJSONHash('sprites', 'assets/images/sprites.png', 'assets/images/sprites.json');

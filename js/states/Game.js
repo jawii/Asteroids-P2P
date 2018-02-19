@@ -7,9 +7,10 @@ init: function(currentLevel) {
     // this.MAX_DISTANCE_SHOOT = 190;
     // this.MAX_SPEED_SHOOT = 1000;
     // this.SHOOT_FACTOR = 12;
-    this.THRUST = 750;
+    this.THRUST = 200;
     this.DEBUG = false;
-    this.SHIPMASS = 2;
+    this.DEBUG = true;
+    this.SHIPMASS = 1;
 
     this.assetScaleFactor = 0.25;
 
@@ -26,7 +27,8 @@ init: function(currentLevel) {
       getHeight: function(){return this.homeArea.y2 - this.homeArea.y1},
       angle: 135,
       score: 0,
-      scoreText: {x: 100, y: 200}
+      scoreText: {x: 257, y: 150},
+      collecting: false
     }
     this.redData = {
       spawn: {x: 1060, y: 550},
@@ -35,7 +37,8 @@ init: function(currentLevel) {
       getHeight: function(){return this.homeArea.y2 - this.homeArea.y1},
       angle: -45,
       score: 0,
-      scoreText: {x: 960, y: 600}
+      scoreText: {x: 920, y: 660},
+      collecting: false
     }
 
     this.blueScores = {
@@ -55,7 +58,7 @@ init: function(currentLevel) {
         triangles: 0
     }
 
-    this.colors = ['0x7AC943', '0x338D91'];
+    this.colors = ['0xfbb03b', '0xFFFF00', '0x00FFFF', "0x0071bc", "0x7ac943", "0x3fa9f5"];
     //keep track of the current level
     this.currentLevel = currentLevel ? currentLevel : 'level1';
 
@@ -110,17 +113,7 @@ create: function() {
     console.log(this.valueData);
 
 
-    //THE X VALUE
-    var style = {
-        font: '20px Arial',
-        fill: 'white'
-    }
-    this.xValueText = this.game.add.text(600, 200, 'x = ' + this.levelData.xValue, style);
-    this.game.world.bringToTop(this.xValueText);
-
-    //player scoreTexts
-    this.redPlayerScoreText = this.game.add.text(this.redData.scoreText.x, this.redData.scoreText.y, this.redData.score, style);
-    this.bluePlayerScoreText = this.game.add.text(this.blueData.scoreText.x, this.blueData.scoreText.y, this.blueData.score, style);
+    
 
     //Player homeland
     var graphics = this.game.add.graphics(0, 0);
@@ -145,33 +138,31 @@ create: function() {
     // blueGravityEmitter.addToWorld();
     // blueGravityEmitter.emit('basic', 0, 0, { zone: line, total: 2, repeat: -1, frequency: 50 });
 
-    //background
-    var background = this.game.add.sprite(this.game.width/2, this.game.height/2, 'background');
-    this.game.physics.p2.enable(background, this.DEBUG);
-    background.body.clearShapes();
-    background.scale.set(0.5);
-    background.body.loadPolygon('physics', 'background');
-    background.body.static = true;
-    // console.log(background.body.y);
-    background.body.setCollisionGroup(this.wallsCollisionGroup);
-    background.body.collides(this.asteroidCollisionGroup, null, this);
-    background.body.collides(this.playerCollisionGroup, null, this);
-    this.game.world.sendToBack(background);
+    //BACKGROUND
+    this.createBackground();
 
-    // var wall1 = this.game.add.sprite(200, 400, 'sprites', 'wall1.png');
-    // this.game.physics.p2.enable(wall1, this.DEBUG);
-    // wall1.body.clearShapes();
-    // wall1.scale.set(this.assetScaleFactor);
-    // wall1.body.loadPolygon('physics', 'wall1');
-    // wall1.body.static = true;
-    // wall1.body.setCollisionGroup(this.wallsCollisionGroup);
-    // wall1.body.collides(this.asteroidCollisionGroup, null, this);
-    // wall1.body.collides(this.playerCollisionGroup, null, this);
-    // background.body.debug = true;
+    //THE X VALUE
+        var scoreStyle = {
+            font: '32px Arial',
+            fill: 'white'
+        }
+        var scoreTextStyle = {
+            font: '24px Arial',
+            fill: 'white'
+        }
+    this.xValueText = this.game.add.text(600, 400, 'x = ' + this.levelData.xValue, scoreStyle);
+    this.xValueText.anchor.setTo(0.5);
+    this.game.world.bringToTop(this.xValueText);
 
+    //player scoreTexts
+    this.redPlayerScoreText = this.game.add.text(this.redData.scoreText.x, this.redData.scoreText.y, this.redData.score, scoreStyle);
+    this.bluePlayerScoreText = this.game.add.text(this.blueData.scoreText.x, this.blueData.scoreText.y, this.blueData.score, scoreStyle);
+    var scoreText = this.game.add.text(this.bluePlayerScoreText.x + 10, this.bluePlayerScoreText.y + 55, "SCORE", scoreTextStyle);
+    scoreText.anchor.setTo(0.5);
 
     //PLAYERS
     this.createShips();
+
 
     //MATERIALS
     this.asteroidMaterial = this.game.physics.p2.createMaterial('asteroidMaterial');
@@ -232,8 +223,8 @@ update: function() {
         var y_angle = Math.cos(angle * 0.0174532925);
         var x = this.shipBlue.x + x_angle * 25;
         var y = this.shipBlue.y +  y_angle * 25;
-        this.blueEmitterData.vx = { value: { min: x_angle, max: x_angle * 2} };
-        this.blueEmitterData.vy = { value: { min: y_angle, max: y_angle * 2} };
+        this.blueEmitterData.vx = { value: { min: x_angle * 4, max: x_angle * 5} };
+        this.blueEmitterData.vy = { value: { min: y_angle * 4, max: y_angle * 5} };
         this.blueShipEmitter.emit('basic', x, y, { zone: this.blueShipCircle, total: 1 });
     }
     else if(this.cursors.down.isDown){this.shipBlue.body.reverse(this.THRUST/2);}
@@ -260,8 +251,8 @@ createShips: function(){
     //BLUESHIP
     this.shipBlue = this.game.add.sprite(this.blueData.spawn.x, this.blueData.spawn.y, 'sprites', 'ship_blue1.png');
     this.game.physics.p2.enable(this.shipBlue, this.DEBUG);
+    // this.shipBlue.scale.set(this.assetScaleFactor);
     this.shipBlue.body.clearShapes();
-    this.shipBlue.scale.set(this.assetScaleFactor);
     this.shipBlue.body.loadPolygon('physics', 'ship');
     this.shipBlue.body.collideWorldBounds = true;
     this.shipBlue.body.setCollisionGroup(this.playerCollisionGroup);
@@ -270,8 +261,8 @@ createShips: function(){
     this.shipBlue.body.collides(this.wallsCollisionGroup, null, this);
     this.shipBlue.body.mass = this.SHIPMASS;
     this.shipBlue.body.angle = this.blueData.angle;
-    // this.shipBlue.scale.set(0.5);
-    this.shipBlue.body.debug = this.DEBUG;
+    this.shipBlue.anchor.setTo(0.5, 0.3);
+    
 
     //particle storm
     this.blueParticleManager = this.game.plugins.add(Phaser.ParticleStorm);
@@ -279,9 +270,9 @@ createShips: function(){
     this.blueEmitterData = {
         image: '4x4_blue',
         // frame: ['blue'],
-        lifespan: 2000,
+        lifespan: 750,
         blendMode: 'ADD',
-        alpha: { initial: 0, value: 1, control: 'linear' },
+        alpha: { initial: 0, value: 0.9, control: 'linear' },
         scale: { value: 1.0, control: [ { x: 0, y: 0.35 }] },
         sendToBack: true
     };
@@ -296,7 +287,7 @@ createShips: function(){
     this.shipRed = this.game.add.sprite(this.redData.spawn.x, this.redData.spawn.y, 'sprites', 'ship_red1.png');
     this.game.physics.p2.enable(this.shipRed, this.DEBUG);
     this.shipRed.body.clearShapes();
-    this.shipRed.scale.set(this.assetScaleFactor);
+    // this.shipRed.scale.set(this.assetScaleFactor);
     this.shipRed.body.loadPolygon('physics', 'ship');
     this.shipRed.body.collideWorldBounds = true;
     this.shipRed.body.setCollisionGroup(this.playerCollisionGroup);
@@ -311,11 +302,11 @@ createShips: function(){
 
     this.redEmitterData = {
         image: '4x4_red',
-        // frame: ['red'],
-        lifespan: 2000,
+        // frame: ['blue'],
+        lifespan: 750,
         blendMode: 'ADD',
-        alpha: { initial: 0, value: 1, control: 'linear' },
-        scale: { value: 1.0, control: [ { x: 0, y: 0.4 }] },
+        alpha: { initial: 0, value: 0.9, control: 'linear' },
+        scale: { value: 1.0, control: [ { x: 0, y: 0.35 }] },
         sendToBack: true
     };
 
@@ -338,9 +329,58 @@ gameOver: function() {
     this.game.state.start('Game', true, false, this.currentLevel);
   },
 
+createBackground: function(){
+    //background
+    var background = this.game.add.sprite(this.game.width/2, this.game.height/2, 'background');
+    this.game.physics.p2.enable(background, this.DEBUG);
+    background.body.clearShapes();
+    background.scale.set(0.5);
+    background.body.loadPolygon('physics', 'background');
+    background.body.static = true;
+    // console.log(background.body.y);
+    background.body.setCollisionGroup(this.wallsCollisionGroup);
+    background.body.collides(this.asteroidCollisionGroup, null, this);
+    background.body.collides(this.playerCollisionGroup, null, this);
+    this.game.world.sendToBack(background);
+
+    var wall1 = this.game.add.sprite(600, 400, 'wall1');
+    this.game.physics.p2.enable(wall1, this.DEBUG);
+    wall1.body.clearShapes();
+    wall1.scale.set(this.assetScaleFactor);
+    wall1.body.loadPolygon('physics', 'wall1');
+    wall1.body.static = true;
+    wall1.body.setCollisionGroup(this.wallsCollisionGroup);
+    wall1.body.collides(this.asteroidCollisionGroup, null, this);
+    wall1.body.collides(this.playerCollisionGroup, null, this);
+    // background.body.debug = true;
+
+    var wall2 = this.game.add.sprite(200, 600, 'wall2');
+    this.game.physics.p2.enable(wall2, this.DEBUG);
+    wall2.body.clearShapes();
+    wall2.scale.set(this.assetScaleFactor);
+    wall2.body.loadPolygon('physics', 'wall2');
+    wall2.body.static = true;
+    wall2.body.angle = 180;
+    wall2.body.setCollisionGroup(this.wallsCollisionGroup);
+    wall2.body.collides(this.asteroidCollisionGroup, null, this);
+    wall2.body.collides(this.playerCollisionGroup, null, this);
+
+    var wall3 = this.game.add.sprite(1000, 150, 'wall3');
+    this.game.physics.p2.enable(wall3, this.DEBUG);
+    wall3.body.clearShapes();
+    wall3.scale.set(this.assetScaleFactor);
+    wall3.body.loadPolygon('physics', 'wall3');
+    wall3.body.static = true;
+    wall3.body.angle = 180;
+    wall3.body.setCollisionGroup(this.wallsCollisionGroup);
+    wall3.body.collides(this.asteroidCollisionGroup, null, this);
+    wall3.body.collides(this.playerCollisionGroup, null, this);
+},
+
+
 loadLevel: function(){
     //creates 10 asteroids
-    for (var i = 0 ; i < 11 ; i++){
+    for (var i = 0 ; i < 16 ; i++){
         this.createRandomAsteroid();
     }
     
@@ -383,7 +423,6 @@ updateShipScore: function(shipColor, valueText){
     // console.log(valueText);
     var player = (shipColor == 'blue') ? this.blueData : this.redData;
     var textGroup = (shipColor == 'blue') ? this.scoreAnswerRevealTextsBlue : this.scoreAnswerRevealTextsRed;
-    
     //destroy all text if any;
     textGroup.forEach(function(element){element.destroy();}, this);
 
@@ -448,6 +487,8 @@ updateShipScore: function(shipColor, valueText){
         textGroup.forEach(function(text){
             text.destroy();
         }, this);
+        player.collecting = false;
+
     }, this);
 },
 
