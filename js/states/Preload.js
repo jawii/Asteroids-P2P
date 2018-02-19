@@ -20,7 +20,7 @@ AsteroidMath.PreloadState = {
     this.load.image('wall3', 'assets/images/wall3.png');
     
     //ships
-    this.game.load.atlasJSONHash('sprites', 'assets/images/sprites.png', 'assets/images/sprites.json');
+    this.game.load.atlasJSONHash('ships', 'assets/images/ships.png', 'assets/images/ships.json');
 
     //physics
     this.load.physics('physics', 'assets/data/physics.json');

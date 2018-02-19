@@ -8,15 +8,15 @@ init: function(currentLevel) {
     // this.MAX_SPEED_SHOOT = 1000;
     // this.SHOOT_FACTOR = 12;
     this.THRUST = 200;
-    this.DEBUG = false;
     this.DEBUG = true;
+    this.DEBUG = false;
     this.SHIPMASS = 1;
 
     this.assetScaleFactor = 0.25;
 
 
     this.levelData = {
-        xValue: 3,
+        xValue: -2,
     }
 
 
@@ -208,21 +208,18 @@ create: function() {
   },   
 
 update: function() {  
-    //reset ship frames
-    this.shipRed.frameName = 'ship_red1.png'
-    this.shipBlue.frameName = 'ship_blue1.png'
     //ship movement
     if (this.cursors.left.isDown){this.shipBlue.body.rotateLeft(50);}
     else if(this.cursors.right.isDown){this.shipBlue.body.rotateRight(50);}
     else{this.shipBlue.body.setZeroRotation();}
     if(this.cursors.up.isDown){
-        this.shipBlue.frameName = 'ship_blue2.png';
+        // this.shipBlue.frameName = 'ship_blue2.png';
         this.shipBlue.body.thrust(this.THRUST);
         var angle = this.shipBlue.body.angle
         var x_angle = - Math.sin(angle* 0.0174532925);
         var y_angle = Math.cos(angle * 0.0174532925);
-        var x = this.shipBlue.x + x_angle * 25;
-        var y = this.shipBlue.y +  y_angle * 25;
+        var x = this.shipBlue.x + x_angle * 18;
+        var y = this.shipBlue.y +  y_angle * 18;
         this.blueEmitterData.vx = { value: { min: x_angle * 4, max: x_angle * 5} };
         this.blueEmitterData.vy = { value: { min: y_angle * 4, max: y_angle * 5} };
         this.blueShipEmitter.emit('basic', x, y, { zone: this.blueShipCircle, total: 1 });
@@ -233,13 +230,13 @@ update: function() {
     else if(this.shipRedRight.isDown){this.shipRed.body.rotateRight(50);}
     else{this.shipRed.body.setZeroRotation();}
     if(this.shipRedUp.isDown){
-        this.shipRed.frameName = 'ship_red2.png';
+        // this.shipRed.frameName = 'ship_red2.png';
         this.shipRed.body.thrust(this.THRUST);
         var angle = this.shipRed.body.angle
         var x_angle = - Math.sin(angle* 0.0174532925);
         var y_angle = Math.cos(angle * 0.0174532925);
-        var x = this.shipRed.x + x_angle * 25;
-        var y = this.shipRed.y +  y_angle * 25;
+        var x = this.shipRed.x + x_angle * 18;
+        var y = this.shipRed.y +  y_angle * 18;
         this.redEmitterData.vx = { value: { min: x_angle, max: x_angle * 2} };
         this.redEmitterData.vy = { value: { min: y_angle, max: y_angle * 2} };
         this.redShipEmitter.emit('basic', x, y, { zone: this.blueShipCircle, total: 1 });
@@ -249,7 +246,7 @@ update: function() {
 
 createShips: function(){
     //BLUESHIP
-    this.shipBlue = this.game.add.sprite(this.blueData.spawn.x, this.blueData.spawn.y, 'sprites', 'ship_blue1.png');
+    this.shipBlue = this.game.add.sprite(this.blueData.spawn.x, this.blueData.spawn.y, 'ships', 'ship_blue.png');
     this.game.physics.p2.enable(this.shipBlue, this.DEBUG);
     // this.shipBlue.scale.set(this.assetScaleFactor);
     this.shipBlue.body.clearShapes();
@@ -261,7 +258,7 @@ createShips: function(){
     this.shipBlue.body.collides(this.wallsCollisionGroup, null, this);
     this.shipBlue.body.mass = this.SHIPMASS;
     this.shipBlue.body.angle = this.blueData.angle;
-    this.shipBlue.anchor.setTo(0.5, 0.3);
+    this.shipBlue.anchor.setTo(0.5);
     
 
     //particle storm
@@ -284,7 +281,7 @@ createShips: function(){
 
 
     //REDSHIP
-    this.shipRed = this.game.add.sprite(this.redData.spawn.x, this.redData.spawn.y, 'sprites', 'ship_red1.png');
+    this.shipRed = this.game.add.sprite(this.redData.spawn.x, this.redData.spawn.y, 'ships', 'ship_red.png');
     this.game.physics.p2.enable(this.shipRed, this.DEBUG);
     this.shipRed.body.clearShapes();
     // this.shipRed.scale.set(this.assetScaleFactor);
@@ -420,7 +417,7 @@ asteroidCollide: function(ship, asteroid){
 
 },
 updateShipScore: function(shipColor, valueText){
-    // console.log(valueText);
+    console.log(valueText);
     var player = (shipColor == 'blue') ? this.blueData : this.redData;
     var textGroup = (shipColor == 'blue') ? this.scoreAnswerRevealTextsBlue : this.scoreAnswerRevealTextsRed;
     //destroy all text if any;
@@ -430,10 +427,11 @@ updateShipScore: function(shipColor, valueText){
     //convert X from valueText to current text and evaluate it
     var value = eval(valueText.value.replace(/x/g, this.levelData.xValue));
 
-    var textWithX = this.parseText(valueText.value)
-    var textWithoutX = this.parseText(valueText.value.replace(/x/g, this.levelData.xValue))
-    var textWithAnswer = textWithoutX + " = " + value
-    console.log(textWithAnswer);
+    var textWithX = this.parseText(valueText.value);
+    var textType = (this.levelData.xValue < 0) ? "valueNeg" : "value";
+    var textWithoutX = this.parseText(valueText[textType].replace(/x/g, this.levelData.xValue));
+    var textWithAnswer = textWithoutX + " = " + value;
+    // console.log(textWithAnswer);
 
     //GET MIDDLE of HomeArea and set the valueTextThere
     var answerStyle = {
