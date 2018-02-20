@@ -22,23 +22,28 @@ init: function(currentLevel) {
 
     this.blueData = {
       spawn: {x: 150, y: 130},
-      homeArea: {x1: 25, x2: 220, y1: 25, y2: 125},
+      homeArea: {x1: 25, x2: 225, y1: 25, y2: 125},
       getWidth: function(){return this.homeArea.x2 - this.homeArea.x1},
       getHeight: function(){return this.homeArea.y2 - this.homeArea.y1},
       angle: 135,
       score: 0,
-      scoreText: {x: 257, y: 150},
-      collecting: false
+      scoreText: {x: 263, y: 170},
+      collecting: false,
+      answerTextWithX: this.game.add.text(),
+      answerTextWithOutX: this.game.add.text()
     }
     this.redData = {
       spawn: {x: 1060, y: 550},
-      homeArea: {x1: 1000, x2: 1200, y1: 660, y2: 780},
+      homeArea: {x1: 975, x2: 1176, y1: 680, y2: 775},
       getWidth: function(){return this.homeArea.x2 - this.homeArea.x1},
       getHeight: function(){return this.homeArea.y2 - this.homeArea.y1},
       angle: -45,
       score: 0,
-      scoreText: {x: 920, y: 660},
-      collecting: false
+      scoreText: {x: 930, y: 675},
+      collecting: false,
+      answerTextWithX: this.game.add.text(),
+      answerTextWithOutX: this.game.add.text()
+
     }
 
     this.blueScores = {
@@ -89,9 +94,6 @@ create: function() {
     this.asteroidCollisionGroup = this.game.physics.p2.createCollisionGroup();
     this.wallsCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
-    //group for score final amount explain texts
-    this.scoreAnswerRevealTextsBlue = this.game.add.group();
-    this.scoreAnswerRevealTextsRed = this.game.add.group();
     //set bounds 
     this.game.world.setBounds(0, 0, 1200, 800); 
     //  Turn on impact events for the world, without this we get no collision callbacks
@@ -143,11 +145,11 @@ create: function() {
 
     //THE X VALUE
         var scoreStyle = {
-            font: '32px Arial',
+            font: '26px Arial',
             fill: 'white'
         }
         var scoreTextStyle = {
-            font: '24px Arial',
+            font: '18px Arial',
             fill: 'white'
         }
     this.xValueText = this.game.add.text(600, 400, 'x = ' + this.levelData.xValue, scoreStyle);
@@ -156,9 +158,18 @@ create: function() {
 
     //player scoreTexts
     this.redPlayerScoreText = this.game.add.text(this.redData.scoreText.x, this.redData.scoreText.y, this.redData.score, scoreStyle);
+    this.redPlayerScoreText.anchor.setTo(0.5);
+    
     this.bluePlayerScoreText = this.game.add.text(this.blueData.scoreText.x, this.blueData.scoreText.y, this.blueData.score, scoreStyle);
-    var scoreText = this.game.add.text(this.bluePlayerScoreText.x + 10, this.bluePlayerScoreText.y + 55, "SCORE", scoreTextStyle);
+    this.bluePlayerScoreText.anchor.setTo(0.5);
+    
+    var scoreText = this.game.add.text(this.bluePlayerScoreText.x, this.bluePlayerScoreText.y + 30, "SCORE", scoreTextStyle);
     scoreText.anchor.setTo(0.5);
+    // scoreText.fill = 'blue';
+
+    var scoreText = this.game.add.text(this.redPlayerScoreText.x, this.redPlayerScoreText.y - 30, "SCORE", scoreTextStyle);
+    scoreText.anchor.setTo(0.5);
+    // scoreText.fill = 'red';
 
     //PLAYERS
     this.createShips();
@@ -171,6 +182,12 @@ create: function() {
     
     this.asteroidShipContactMaterial = this.game.physics.p2.createContactMaterial(this.shipMaterial, this.asteroidMaterial);
     this.asteroidShipContactMaterial.restitution = 0;
+    this.asteroidShipContactMaterial.relaxation = 15;
+    // this.asteroidShipContactMaterial.frictionStiffness = 1e7;
+    // this.asteroidShipContactMaterial.frictionRelaxation = 15;
+    this.asteroidShipContactMaterial.surfaceVelocity = 0;
+    this.asteroidShipContactMaterial.friction = 1;
+
     
     this.asteroidAsteroidContactMaterial = this.game.physics.p2.createContactMaterial(this.asteroidMaterial, this.asteroidMaterial);
     this.asteroidAsteroidContactMaterial.restitution = 0.7;
@@ -207,7 +224,7 @@ create: function() {
 
   },   
 
-update: function() {  
+update: function() {
     //ship movement
     if (this.cursors.left.isDown){this.shipBlue.body.rotateLeft(50);}
     else if(this.cursors.right.isDown){this.shipBlue.body.rotateRight(50);}
@@ -416,12 +433,8 @@ asteroidCollide: function(ship, asteroid){
 
 },
 updateShipScore: function(shipColor, valueText){
-    console.log(valueText);
+    // console.log(valueText);
     var player = (shipColor == 'blue') ? this.blueData : this.redData;
-    var textGroup = (shipColor == 'blue') ? this.scoreAnswerRevealTextsBlue : this.scoreAnswerRevealTextsRed;
-    //destroy all text if any;
-    textGroup.forEach(function(element){element.destroy();}, this);
-
 
     //convert X from valueText to current text and evaluate it
     var value = eval(valueText.value.replace(/x/g, this.levelData.xValue));
@@ -430,11 +443,10 @@ updateShipScore: function(shipColor, valueText){
     var textType = (this.levelData.xValue < 0) ? "valueNeg" : "value";
     var textWithoutX = this.parseText(valueText[textType].replace(/x/g, this.levelData.xValue));
     var textWithAnswer = textWithoutX + " = " + value;
-    // console.log(textWithAnswer);
 
     //GET MIDDLE of HomeArea and set the valueTextThere
     var answerStyle = {
-        font: '22px Arial',
+        font: '20px Arial',
         fill: 'white'
     };
     var marginalX = 10;
@@ -443,47 +455,44 @@ updateShipScore: function(shipColor, valueText){
     var dummyText = this.game.add.text(0, 0, textWithAnswer, answerStyle);
     var textWidth = dummyText.width;
     dummyText.destroy();
-
     var textX = player.homeArea.x1 + (player.getWidth() - textWidth)/2;
     var textY = (player.homeArea.y2 + player.homeArea.y1)/2 + offsetTextY
-    console.log(textWidth);
 
-    var answerTextWithX = this.game.add.text(textX, textY, textWithX, answerStyle);
-    // answerTextWithX.anchor.setTo(1, 0.5);
-    answerTextWithX.alpha = 1;
-    textGroup.add(answerTextWithX);
+    player.answerTextWithX.reset();
+    player.answerTextWithX.x = textX;
+    player.answerTextWithX.y = textY;
+    player.answerTextWithX.setText(textWithX);
+    player.answerTextWithX.setStyle(answerStyle);
+    player.answerTextWithX.alpha = 1;
 
-    answerTextWithOutX = this.game.add.text(textX, textY, textWithoutX, answerStyle);
-    // answerTextWithOutX.anchor.setTo(1, 0.5);
-    answerTextWithOutX.alpha = 0;
-    textGroup.add(answerTextWithOutX);
+    player.answerTextWithOutX.reset();
+    player.answerTextWithOutX.x = textX;
+    player.answerTextWithOutX.y = textY;
+    player.answerTextWithOutX.setText(textWithoutX);
+    player.answerTextWithOutX.setStyle(answerStyle);
+    player.answerTextWithOutX.alpha = 0;
+    player.answerTextWithOutX.clearColors();
 
     //tween
-    var tween1 = this.game.add.tween(answerTextWithX).to({alpha: 0}, 500, 'Linear', false);
-    var tween2 = this.game.add.tween(answerTextWithOutX).to({alpha: 1}, 1500, 'Linear', false);
-    tween1.start();
-    tween2.start();
+    var tween1 = this.game.add.tween(player.answerTextWithX).to({alpha: 0}, 1500, "Expo.easeOut", true);
+    var tween2 = this.game.add.tween(player.answerTextWithOutX).to({alpha: 1}, 2000, 'Linear', true);
     tween2.onComplete.add(function(){
-        answerTextWithOutX.setText(textWithAnswer);
-        
-        var index = answerTextWithOutX.text.indexOf("=") + 1;
+        player.answerTextWithOutX.setText(textWithAnswer);
+        var index = player.answerTextWithOutX.text.indexOf("=") + 1;
         if(value > 0){
-            answerTextWithOutX.addColor("green", index);
+            player.answerTextWithOutX.addColor("green", index);
         }else{
-            answerTextWithOutX.addColor("red", index);
+            player.answerTextWithOutX.addColor("red", index);
         }
-
-        answerTextWithX.destroy();
+        player.answe
+        player.answerTextWithX.kill();
     }, this);
 
-    this.game.time.events.add(Phaser.Timer.SECOND * 3, function(){
-        answerTextWithOutX.destroy();
-        player.score += value;
+    this.game.time.events.add(Phaser.Timer.SECOND * 4, function(){
+        player.answerTextWithOutX.kill();
+        player.score += value
         this.bluePlayerScoreText.setText(this.blueData.score);
         this.redPlayerScoreText.setText(this.redData.score);
-        textGroup.forEach(function(text){
-            text.destroy();
-        }, this);
         player.collecting = false;
 
     }, this);
@@ -523,10 +532,17 @@ testTasks: function(){
     for (var i = 0 ; i < valueData.length ; i++){
         eval(valueData[i].valueNeg.replace(/x/g, x));
     }
-
-    var x = 1
     for (var i = 0 ; i < valueData.length ; i++){
         eval(valueData[i].valueNeg.replace(/x/g, x));
+    }
+
+    x = 1;
+    for (var i = 0 ; i < valueData.length ; i++){
+        eval(valueData[i].value.replace(/x/g, x));
+    }
+    
+    for (var i = 0 ; i < valueData.length ; i++){
+        eval(valueData[i].value.replace(/x/g, x));
     }
     
 }
@@ -553,3 +569,13 @@ testTasks: function(){
     //         // sprite.tint = 2000 * 0x000000;
     //     }, this);
     // }
+/*
+xRizeTween: function(reward, time){
+    //create object score for tweening
+    
+    var tween = this.game.add.tween(this.xData).to( { xNow: this.xData.xNow + reward }, time, Phaser.Easing.Linear.None);
+    tween.start()
+  },
+
+
+*/

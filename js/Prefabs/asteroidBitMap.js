@@ -45,8 +45,8 @@ AsteroidMath.Asteroid.prototype.reset = function(x, y, data){
 	//make sprite appear in the world - tween
 
 	var rnd = Math.random();
-	this.alpha = rnd;
-	this.body.mass = rnd * 2;
+	this.alpha = rnd + 0.75;
+	this.body.mass = rnd * 5;
 
 	//tint that heavier sprites gets darker
 	// this.tint = 0xFFFFFF
