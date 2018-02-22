@@ -1,0 +1,8 @@
+{
+		"value6": {
+		"text": "x^3 - 4",
+		"value": "x * x * x - 4",
+		"valueNeg": "x * (x) * (x) - 4"
+	}
+
+}

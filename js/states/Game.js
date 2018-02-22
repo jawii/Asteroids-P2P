@@ -12,6 +12,10 @@ init: function(currentLevel) {
     this.DEBUG = false;
     this.SHIPMASS = 1;
 
+    this.font2 = "source_sans_prosemibold";
+    this.font1 = "inconsolataregular";
+
+
     this.assetScaleFactor = 0.25;
 
 
@@ -145,11 +149,13 @@ create: function() {
 
     //THE X VALUE
         var scoreStyle = {
-            font: '26px Arial',
+            font: this.font1,
+            fontSize: '30px',
             fill: 'white'
         }
         var scoreTextStyle = {
-            font: '18px Arial',
+            font: this.font1,
+            fontSize: '26px',
             fill: 'white'
         }
     this.xValueText = this.game.add.text(600, 400, 'x = ' + this.levelData.xValue, scoreStyle);
@@ -393,17 +399,27 @@ createBackground: function(){
 
 loadLevel: function(){
     //creates 10 asteroids
-    for (var i = 0 ; i < 16 ; i++){
-        this.createRandomAsteroid();
-    }
+    var spawnP = [[100, 600], [105, 700], [220, 710], [985, 54], [1105, 74.7], [1118, 137], [380, 88], [815, 703], [974, 186], [215, 560],[587, 531], [603, 290]];
     
-
+    for (var i = 0 ; i < 12 ; i++){
+        this.createRandomAsteroid(spawnP[i][0], spawnP[i][1]);
+    }
   },
 
-createRandomAsteroid: function(){
+render: function() {
+
+    // Sprite debug info
+    // this.game.debug.spriteInfo(this.shipBlue, 32, 32);
+
+},
+createRandomAsteroid: function(xCoord, yCoord){
     //create random place in game area
-    var x = this.game.rnd.integerInRange(150, this.game.width - 150);
-    var y = this.game.rnd.integerInRange(150, this.game.height - 150);
+    //spawn areas
+    var spawnP = [[100, 600], [105, 700], [220, 710], [985, 54], [1105, 74.7], [1118, 137], [380, 88], [815, 703], [974, 186], [215, 560],[587, 531], [603, 290]];
+    
+    var xy = spawnP[Math.floor(Math.random()* spawnP.length)];
+    var x = this.game.rnd.integerInRange(-15, 15);
+    var y = this.game.rnd.integerInRange(-15, 15);
 
     //check if x and y dont overlap with walls
     var data = {}
@@ -415,8 +431,14 @@ createRandomAsteroid: function(){
     //look for dead element
     var newElement = this.asteroids.getFirstDead();
 
+    //if coordinates as arguments, set them
+    if(xCoord && yCoord){
+        console.log("Here");
+        xy = [xCoord, yCoord];
+    }
+
     if(!newElement || this.asteroids.children.length < 20){
-      newElement = new AsteroidMath.Asteroid(this, x, y, data);
+      newElement = new AsteroidMath.Asteroid(this, xy[0] + x, xy[1] + y, data);
       this.asteroids.add(newElement);
     }
     else{
@@ -445,25 +467,36 @@ updateShipScore: function(shipColor, valueText){
     var textWithAnswer = textWithoutX + " = " + value;
 
     //GET MIDDLE of HomeArea and set the valueTextThere
-    var answerStyle = {
-        font: '20px Arial',
-        fill: 'white'
-    };
-    var marginalX = 10;
-    var offsetTextY = -10;
 
     var dummyText = this.game.add.text(0, 0, textWithAnswer, answerStyle);
     var textWidth = dummyText.width;
     dummyText.destroy();
+    var marginalX = 10;
+    var offsetTextY = -10;
     var textX = player.homeArea.x1 + (player.getWidth() - textWidth)/2;
     var textY = (player.homeArea.y2 + player.homeArea.y1)/2 + offsetTextY
 
+    var answerStyle = {
+        font: this.font1,
+        fontSize: '20px',
+        fill: 'white'
+        // wordWrap: true,
+        // wordWrapWidth: textWidth
+    };
+    if(textWidth > player.getWidth()){
+        answerStyle.wordWrap = true;
+        wordWrapWidth =  player.getWidth() - 75;
+        textX = player.homeArea.x1 + 50;
+        textY = player.homeArea.y1 + 10;
+    }
+    
     player.answerTextWithX.reset();
     player.answerTextWithX.x = textX;
     player.answerTextWithX.y = textY;
     player.answerTextWithX.setText(textWithX);
     player.answerTextWithX.setStyle(answerStyle);
     player.answerTextWithX.alpha = 1;
+    player.answerTextWithX.clearColors();
 
     player.answerTextWithOutX.reset();
     player.answerTextWithOutX.x = textX;
@@ -473,28 +506,51 @@ updateShipScore: function(shipColor, valueText){
     player.answerTextWithOutX.alpha = 0;
     player.answerTextWithOutX.clearColors();
 
-    //tween
-    var tween1 = this.game.add.tween(player.answerTextWithX).to({alpha: 0}, 1500, "Expo.easeOut", true);
-    var tween2 = this.game.add.tween(player.answerTextWithOutX).to({alpha: 1}, 2000, 'Linear', true);
-    tween2.onComplete.add(function(){
-        player.answerTextWithOutX.setText(textWithAnswer);
-        var index = player.answerTextWithOutX.text.indexOf("=") + 1;
-        if(value > 0){
-            player.answerTextWithOutX.addColor("green", index);
-        }else{
-            player.answerTextWithOutX.addColor("red", index);
-        }
-        player.answe
-        player.answerTextWithX.kill();
-    }, this);
+    //make x to yellow
+    //get all x indexes
+    var str = player.answerTextWithX.text;
+    var indices = [];
+    for(var i=0; i<str.length;i++) {
+        if (str[i] === "x") indices.push(i);
+    }
+    //make them yellow
+    for(var i=0; i<indices.length; i ++){
+        player.answerTextWithX.addColor('yellow', indices[i]);
+        player.answerTextWithX.addColor('white', indices[i] + 1);
+    }
 
-    this.game.time.events.add(Phaser.Timer.SECOND * 4, function(){
-        player.answerTextWithOutX.kill();
-        player.score += value
-        this.bluePlayerScoreText.setText(this.blueData.score);
-        this.redPlayerScoreText.setText(this.redData.score);
-        player.collecting = false;
+    var tween1 = this.game.add.tween(player.answerTextWithX).to({alpha: 0}, 1000, "Expo.easeIn", true);
 
+    this.game.time.events.add(Phaser.Timer.SECOND * 1, function(){
+        //convert all this.levelData.xValue to yewllo
+        // var str = player.answerTextWithOutX.text;
+        // var index = str.indexOf(this.levelData.xValue.toString());
+        // player.answerTextWithOutX.addColor('yellow', index);
+        // player.answerTextWithOutX.addColor('white', index + this.levelData.xValue.toString().length);
+        // console.log(index + this.levelData.xValue.toString().length);
+        var tween2 = this.game.add.tween(player.answerTextWithOutX).to({alpha: 1}, 3000, 'Expo.easeOut', true);
+
+        tween2.onComplete.add(function(){
+            player.answerTextWithOutX.setText(textWithAnswer);
+            // console.log(textWithAnswer);
+            var index = player.answerTextWithOutX.text.indexOf("=") + 1;
+            if(value > 0){
+                player.answerTextWithOutX.addColor("green", index);
+            }else{
+                player.answerTextWithOutX.addColor("red", index);
+            }
+            player.answerTextWithX.kill();
+        }, this);
+
+        this.game.time.events.add(Phaser.Timer.SECOND * 6, function(){
+            player.answerTextWithOutX.kill();
+            player.score += value
+            this.bluePlayerScoreText.setText(this.blueData.score);
+            this.redPlayerScoreText.setText(this.redData.score);
+            player.collecting = false;
+            
+
+        }, this);
     }, this);
 },
 
@@ -514,7 +570,8 @@ parseText: function(text, replace, replacement){
         "2/3": '\u{2154}',
         "1/4": '\u{00BC}',
         ">=:": '\u{2265}',
-        "+-:": '\u{00B1}'
+        "+-:": '\u{00B1}',
+        "-:": '\u{2212}',
         }
     for(var key in replaceObj){
         // console.log(key);
