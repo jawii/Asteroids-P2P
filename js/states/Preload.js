@@ -28,8 +28,8 @@ AsteroidMath.PreloadState = {
     this.load.image('4x4_blue', 'assets/images/4x4_blue.png');
 
     //load values
-    // this.load.text('values', 'js/data/values.json');
-    this.load.text('values', 'js/data/valuesTest.json');
+    this.load.text('values', 'js/data/values.json');
+    // this.load.text('values', 'js/data/valuesTest.json');
     
     //emitter
     this.game.load.path = 'assets/images/';
