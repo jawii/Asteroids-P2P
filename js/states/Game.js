@@ -14,60 +14,66 @@ init: function(currentLevel) {
 
     this.font2 = "source_sans_prosemibold";
     this.font1 = "inconsolataregular";
-
-
     this.assetScaleFactor = 0.25;
 
-
     this.levelData = {
+        name: "Round 2",
+        jsonValues: 'values1',
+        background: 'background2',
+        walls: {wall1: {x:600, y: 400, angle: 0}, wall2: {x:200, y: 600, angle: 180}, wall3: {x: 1000, y: 150, angle: 180}},
         xValue: -2,
-    }
+        xValues: [-3, -2, -1, 0, 1, 2, 3],
+        xChangeTime: 90,
+        colors: ['0xfbb03b', '0xFFFF00', '0x00FFFF', "0x0071bc", "0x7ac943", "0x3fa9f5"],
+        spawnCoords: [[100, 600], [105, 700], [220, 710], [985, 54], [1105, 74.7], [1118, 137], [380, 88], [815, 703], [974, 186], [215, 560],[587, 531], [603, 290]],
+        //BLUEDATA
+        BLUEspawn: {x: 150, y: 130},
+        BLUEhomeArea: {x1: 25, x2: 225, y1: 25, y2: 125},
+        BLUEangle: 135,
+        BLUEscore: 0,
+        BLUEscoreText: {x: 263, y: 170},
+        BLUEcollecting: false,
+        BLUEanswerTextWithX: this.game.add.text(),
+        BLUEanswerTextWithOutX: this.game.add.text(),
+        BLUEgravityLine: {x1: 80, y1: 235, x2: 165, y2: 235},
+        //REDDATA
+        REDspawn: {x: 1060, y: 550},
+        REDhomeArea: {x1: 975, x2: 1176, y1: 680, y2: 775},
+        REDangle: -45,
+        REDscore: 0,
+        REDscoreText: {x: 930, y: 675},
+        REDcollecting: false,
+        REDanswerTextWithX: this.game.add.text(),
+        REDanswerTextWithOutX: this.game.add.text(),
+        REDgravityLine: {x1: 1040, y1: 600, x2: 1140, y2: 600},
+    };
 
+    this.blueData = {};
+    this.blueData.spawn = this.levelData.BLUEspawn;
+    this.blueData.homeArea = this.levelData.BLUEhomeArea;
+    this.blueData.getWidth = function(){return this.homeArea.x2 - this.homeArea.x1};
+    this.blueData.getHeight = function(){return this.homeArea.y2 - this.homeArea.y1};
+    this.blueData.angle = this.levelData.BLUEangle;
+    this.blueData.score = this.levelData.BLUEscore;
+    this.blueData.scoreText = this.levelData.BLUEscoreText;
+    this.blueData.collecting = this.levelData.BLUEcollecting;
+    this.blueData.answerTextWithX = this.levelData.BLUEanswerTextWithX;
+    this.blueData.answerTextWithOutX = this.levelData.BLUEanswerTextWithOutX;
+    this.blueData.gravityLine = this.levelData.BLUEgravityLine;
 
-    this.blueData = {
-      spawn: {x: 150, y: 130},
-      homeArea: {x1: 25, x2: 225, y1: 25, y2: 125},
-      getWidth: function(){return this.homeArea.x2 - this.homeArea.x1},
-      getHeight: function(){return this.homeArea.y2 - this.homeArea.y1},
-      angle: 135,
-      score: 0,
-      scoreText: {x: 263, y: 170},
-      collecting: false,
-      answerTextWithX: this.game.add.text(),
-      answerTextWithOutX: this.game.add.text()
-    }
-    this.redData = {
-      spawn: {x: 1060, y: 550},
-      homeArea: {x1: 975, x2: 1176, y1: 680, y2: 775},
-      getWidth: function(){return this.homeArea.x2 - this.homeArea.x1},
-      getHeight: function(){return this.homeArea.y2 - this.homeArea.y1},
-      angle: -45,
-      score: 0,
-      scoreText: {x: 930, y: 675},
-      collecting: false,
-      answerTextWithX: this.game.add.text(),
-      answerTextWithOutX: this.game.add.text()
-
-    }
-
-    this.blueScores = {
-        circles: 0,
-        hexagons: 0,
-        pentagons: 0,
-        squares: 0,
-        stars: 0,
-        triangles: 0
-    }
-    this.redScores = {
-        circles: 0,
-        hexagons: 0,
-        pentagons: 0,
-        squares: 0,
-        stars: 0,
-        triangles: 0
-    }
-
-    this.colors = ['0xfbb03b', '0xFFFF00', '0x00FFFF', "0x0071bc", "0x7ac943", "0x3fa9f5"];
+    this.redData = {};
+    this.redData.spawn = this.levelData.REDspawn;
+    this.redData.homeArea = this.levelData.REDhomeArea;
+    this.redData.getWidth = function(){return this.homeArea.x2 - this.homeArea.x1};
+    this.redData.getHeight = function(){return this.homeArea.y2 - this.homeArea.y1};
+    this.redData.angle = this.levelData.REDangle;
+    this.redData.score = this.levelData.REDscore;
+    this.redData.scoreText = this.levelData.REDscoreText;
+    this.redData.collecting = this.levelData.REDcollecting;
+    this.redData.answerTextWithX = this.levelData.REDanswerTextWithX;
+    this.redData.answerTextWithOutX = this.levelData.REDanswerTextWithOutX;
+    this.redData.gravityLine = this.levelData.REDgravityLine;
+    
     //keep track of the current level
     this.currentLevel = currentLevel ? currentLevel : 'level1';
 
@@ -75,6 +81,7 @@ init: function(currentLevel) {
     this.game.physics.startSystem(Phaser.Physics.P2JS);
 
   },
+
 create: function() {   
 
     //GROUPS
@@ -115,91 +122,16 @@ create: function() {
 
 
     //JSON PARSE VALUES TO ARRAY
-    this.valueData = Object.values(JSON.parse(this.game.cache.getText('values')));
-    // console.log(this.valueData);
-
-
-    
-
-    //Player homeland
-    var graphics = this.game.add.graphics(0, 0);
-    graphics.lineStyle(2, 0x0000FF, 1);
-    graphics.drawRect(this.blueData.homeArea.x1, this.blueData.homeArea.y1, this.blueData.homeArea.x2 - this.blueData.homeArea.x1, this.blueData.homeArea.y2 - this.blueData.homeArea.y1);
-
-    graphics.lineStyle(2, 0xFF0000, 1);
-    graphics.drawRect(this.redData.homeArea.x1, this.redData.homeArea.y1, this.redData.homeArea.x2 - this.redData.homeArea.x1, this.redData.homeArea.y2 - this.redData.homeArea.y1);
-    
-    //create gravity wells
-    // var blueGravityWellmanager = this.game.plugins.add(Phaser.ParticleStorm);
-    // var data = {
-    //     lifespan: 1000,
-    //     image: '4x4',
-    //     vy: { min: 0.5, max: 1 },  
-    // }
-    // blueGravityWellmanager.addData('basic', data);
-    // blueGravityEmitter = blueGravityWellmanager.createEmitter();
-    // //  Create a Gravity Well on the Emitter.
-    // var well = blueGravityEmitter.createGravityWell(50, 50, 1, 200);
-    // var line = blueGravityWellmanager.createLineZone(100, 50, 700, 50);
-    // blueGravityEmitter.addToWorld();
-    // blueGravityEmitter.emit('basic', 0, 0, { zone: line, total: 2, repeat: -1, frequency: 50 });
+    this.valueData = Object.values(JSON.parse(this.game.cache.getText(this.levelData.jsonValues)));
 
     //BACKGROUND
     this.createBackground();
 
-    //THE X VALUE
-        var scoreStyle = {
-            font: this.font1,
-            fontSize: '30px',
-            fill: 'white'
-        }
-        var scoreTextStyle = {
-            font: this.font1,
-            fontSize: '26px',
-            fill: 'white'
-        }
-    this.xValueText = this.game.add.text(600, 400, 'x = ' + this.levelData.xValue, scoreStyle);
-    this.xValueText.anchor.setTo(0.5);
-    this.game.world.bringToTop(this.xValueText);
-
-    //player scoreTexts
-    this.redPlayerScoreText = this.game.add.text(this.redData.scoreText.x, this.redData.scoreText.y, this.redData.score, scoreStyle);
-    this.redPlayerScoreText.anchor.setTo(0.5);
-    
-    this.bluePlayerScoreText = this.game.add.text(this.blueData.scoreText.x, this.blueData.scoreText.y, this.blueData.score, scoreStyle);
-    this.bluePlayerScoreText.anchor.setTo(0.5);
-    
-    var scoreText = this.game.add.text(this.bluePlayerScoreText.x, this.bluePlayerScoreText.y + 30, "SCORE", scoreTextStyle);
-    scoreText.anchor.setTo(0.5);
-    // scoreText.fill = 'blue';
-
-    var scoreText = this.game.add.text(this.redPlayerScoreText.x, this.redPlayerScoreText.y - 30, "SCORE", scoreTextStyle);
-    scoreText.anchor.setTo(0.5);
-    // scoreText.fill = 'red';
-
     //PLAYERS
     this.createShips();
 
-
     //MATERIALS
-    this.asteroidMaterial = this.game.physics.p2.createMaterial('asteroidMaterial');
-    this.shipMaterial = this.game.physics.p2.createMaterial('shipMaterial');
-    this.game.physics.p2.setMaterial(this.shipMaterial, [this.shipRed.body, this.shipBlue.body]);
-    
-    this.asteroidShipContactMaterial = this.game.physics.p2.createContactMaterial(this.shipMaterial, this.asteroidMaterial);
-    this.asteroidShipContactMaterial.restitution = 0;
-    this.asteroidShipContactMaterial.relaxation = 15;
-    // this.asteroidShipContactMaterial.frictionStiffness = 1e7;
-    // this.asteroidShipContactMaterial.frictionRelaxation = 15;
-    this.asteroidShipContactMaterial.surfaceVelocity = 0;
-    this.asteroidShipContactMaterial.friction = 1;
-
-    
-    this.asteroidAsteroidContactMaterial = this.game.physics.p2.createContactMaterial(this.asteroidMaterial, this.asteroidMaterial);
-    this.asteroidAsteroidContactMaterial.restitution = 0.7;
-
-    this.shipShipContactMaterial = this.game.physics.p2.createContactMaterial(this.shipMaterial, this.shipMaterial);
-    this.shipShipContactMaterial.restitution = 2.0;
+    this.materialsSetUp();
 
     //asteroid
     this.asteroids = this.add.group();
@@ -208,29 +140,33 @@ create: function() {
     //group for geometry piece info 
     this.missionTable = this.game.add.group();
 
+    //LOAD LEVELS AND TEXTS
     this.loadLevel();
-    // this.createMission();
 
-    //////
-    //testing bitmap sprites
-    /////
-    //circle
-    // var bmd = this.game.add.bitmapData(50, 50);
-    // bmd.ctx.beginPath();
-    // bmd.ctx.rect(0,0,50,50);
-    // bmd.ctx.fillStyle = '#ffffff';
-    // bmd.ctx.fill();
-    // var bitmapSprite = this.game.add.sprite(400, 400, bmd);
-    // AsteroidMath.GameState.asteroids.add(bitmapSprite);
-    // bitmapSprite.body.setCollisionGroup(AsteroidMath.GameState.asteroidCollisionGroup);
-    // bitmapSprite.body.collides([AsteroidMath.GameState.asteroidCollisionGroup, AsteroidMath.GameState.playerCollisionGroup, AsteroidMath.GameState.wallsCollisionGroup]);
-    // bitmapSprite.game.physics.p2.setMaterial(AsteroidMath.GameState.asteroidMaterial, [bitmapSprite.body]);
-    // bitmapSprite.body.debug = true;
-    
+    //TEST TASKS
+    this.testTasks();
 
   },   
 
 update: function() {
+
+    //timer
+    if(this.xValueChangeText){
+        this.xValueChangeText.setText(Math.ceil(this.xTimer.duration / 1000));
+        this.xValueChangeText.fill = 'white';
+        if(this.xTimer.duration / 1000 < 10){
+            this.xValueChangeText.fill = 'red';
+        }
+        else if(this.xTimer.duration / 1000 < 30){
+            this.xValueChangeText.fill = 'orange';
+        }
+        else if(this.xTimer.duration / 1000 < this.levelData.xChangeTime){
+            this.xValueChangeText.fill = 'green';
+        }
+        else{
+            this.xValueChangeText.setText(this.levelData.xChangeTime);
+        }
+    }
     //ship movement
     if (this.cursors.left.isDown){this.shipBlue.body.rotateLeft(50);}
     else if(this.cursors.right.isDown){this.shipBlue.body.rotateRight(50);}
@@ -282,21 +218,17 @@ createShips: function(){
     this.shipBlue.body.mass = this.SHIPMASS;
     this.shipBlue.body.angle = this.blueData.angle;
     this.shipBlue.anchor.setTo(0.5);
-    
-
     //particle storm
     this.blueParticleManager = this.game.plugins.add(Phaser.ParticleStorm);
-
     this.blueEmitterData = {
         image: '4x4_blue',
         // frame: ['blue'],
         lifespan: 750,
         blendMode: 'ADD',
         alpha: { initial: 0, value: 0.9, control: 'linear' },
-        scale: { value: 1.0, control: [ { x: 0, y: 0.35 }] },
+        scale: { value: 1.0, control: [ { x: 0, y: 0.75 }] },
         sendToBack: true
     };
-
     this.blueParticleManager.addData('basic', this.blueEmitterData);
     this.blueShipCircle = this.blueParticleManager.createCircleZone(10);
     this.blueShipEmitter = this.blueParticleManager.createEmitter();
@@ -326,7 +258,7 @@ createShips: function(){
         lifespan: 750,
         blendMode: 'ADD',
         alpha: { initial: 0, value: 0.9, control: 'linear' },
-        scale: { value: 1.0, control: [ { x: 0, y: 0.35 }] },
+        scale: { value: 1.0, control: [ { x: 0, y: 0.75 }] },
         sendToBack: true
     };
 
@@ -348,14 +280,49 @@ createShips: function(){
 gameOver: function() {
     this.game.state.start('Game', true, false, this.currentLevel);
   },
-
 createBackground: function(){
+    //create gravity wells
+    var blueGravityWellmanager = this.game.plugins.add(Phaser.ParticleStorm);
+    var data = {
+        lifespan: 3500,
+        blendMode: 'ADD',
+        alpha: { initial: 0, value: 0.5, control: 'linear' },
+        image: '4x4_blue',
+        vy: { min: -0.5, max: 0 },  
+        vx: { min: -0.2, max: 0.2 }  
+    }
+    blueGravityWellmanager.addData('basic', data);
+    blueGravityEmitter = blueGravityWellmanager.createEmitter();
+    //  Create a Gravity Well on the Emitter.
+    var well = blueGravityEmitter.createGravityWell(this.blueData.homeArea.x1 + this.blueData.getWidth()/2, this.blueData.homeArea.y1 + this.blueData.getHeight()/2, 1, 200);
+    var line = blueGravityWellmanager.createLineZone(this.blueData.gravityLine.x1, this.blueData.gravityLine.y1, this.blueData.gravityLine.x2, this.blueData.gravityLine.y2);
+    blueGravityEmitter.addToWorld();
+    blueGravityEmitter.emit('basic', 0, 0, { zone: line, total: 2, repeat: -1, frequency: 150 });
+
+
+    //create gravity wells
+    var redGravityWellmanager = this.game.plugins.add(Phaser.ParticleStorm);
+    var data = {
+        lifespan: 3500,
+        blendMode: 'ADD',
+        alpha: { initial: 0, value: 0.5, control: 'linear' },
+        image: '4x4_red',
+        vy: { min: 0, max: 0.5 },  
+        vx: { min: -0.2, max: 0.2 }  
+    }
+    redGravityWellmanager.addData('basic', data);
+    redGravityEmitter = redGravityWellmanager.createEmitter();
+    //  Create a Gravity Well on the Emitter.
+    var well = redGravityEmitter.createGravityWell(this.redData.homeArea.x1 + this.redData.getWidth()/2, this.redData.homeArea.y1 + this.redData.getHeight()/2, 1, 200);
+    var line = redGravityWellmanager.createLineZone(this.redData.gravityLine.x1, this.redData.gravityLine.y1, this.redData.gravityLine.x2, this.redData.gravityLine.y2);
+    redGravityEmitter.addToWorld();
+    redGravityEmitter.emit('basic', 0, 0, { zone: line, total: 2, repeat: -1, frequency: 150 });
     //background
-    var background = this.game.add.sprite(this.game.width/2, this.game.height/2, 'background');
+    var background = this.game.add.sprite(this.game.width/2, this.game.height/2, 'background2');
     this.game.physics.p2.enable(background, this.DEBUG);
     background.body.clearShapes();
     background.scale.set(0.5);
-    background.body.loadPolygon('physics', 'background');
+    background.body.loadPolygon('physics', 'background2');
     background.body.static = true;
     // console.log(background.body.y);
     background.body.setCollisionGroup(this.wallsCollisionGroup);
@@ -363,48 +330,186 @@ createBackground: function(){
     background.body.collides(this.playerCollisionGroup, null, this);
     this.game.world.sendToBack(background);
 
-    var wall1 = this.game.add.sprite(600, 400, 'wall1');
-    this.game.physics.p2.enable(wall1, this.DEBUG);
-    wall1.body.clearShapes();
-    wall1.scale.set(this.assetScaleFactor);
-    wall1.body.loadPolygon('physics', 'wall1');
-    wall1.body.static = true;
-    wall1.body.setCollisionGroup(this.wallsCollisionGroup);
-    wall1.body.collides(this.asteroidCollisionGroup, null, this);
-    wall1.body.collides(this.playerCollisionGroup, null, this);
-    // background.body.debug = true;
 
-    var wall2 = this.game.add.sprite(200, 600, 'wall2');
-    this.game.physics.p2.enable(wall2, this.DEBUG);
-    wall2.body.clearShapes();
-    wall2.scale.set(this.assetScaleFactor);
-    wall2.body.loadPolygon('physics', 'wall2');
-    wall2.body.static = true;
-    wall2.body.angle = 180;
-    wall2.body.setCollisionGroup(this.wallsCollisionGroup);
-    wall2.body.collides(this.asteroidCollisionGroup, null, this);
-    wall2.body.collides(this.playerCollisionGroup, null, this);
+    //make the walls if given in leveldata
+    if(this.levelData.walls){
+        var obj = this.levelData.walls
+        Object.keys(obj).forEach(function(key) {
+            console.log(key, obj[key]);
+            var wall = this.game.add.sprite(obj[key].x, obj[key].y, key);
+            this.game.physics.p2.enable(wall, this.DEBUG);
+            wall.body.clearShapes();
+            wall.scale.set(this.assetScaleFactor);
+            wall.body.loadPolygon('physics', key);
+            wall.body.static = true;
+            wall.body.angle =  obj[key].angle;
+            wall.body.setCollisionGroup(this.wallsCollisionGroup);
+            wall.body.collides(this.asteroidCollisionGroup, null, this);
+            wall.body.collides(this.playerCollisionGroup, null, this);
+        }, this);
+    }
+    // //WALLS
+    // var wall1 = this.game.add.sprite(600, 400, 'wall1');
+    // this.game.physics.p2.enable(wall1, this.DEBUG);
+    // wall1.body.clearShapes();
+    // wall1.scale.set(this.assetScaleFactor);
+    // wall1.body.loadPolygon('physics', 'wall1');
+    // wall1.body.static = true;
+    // wall1.body.setCollisionGroup(this.wallsCollisionGroup);
+    // wall1.body.collides(this.asteroidCollisionGroup, null, this);
+    // wall1.body.collides(this.playerCollisionGroup, null, this);
+    // // background.body.debug = true;
 
-    var wall3 = this.game.add.sprite(1000, 150, 'wall3');
-    this.game.physics.p2.enable(wall3, this.DEBUG);
-    wall3.body.clearShapes();
-    wall3.scale.set(this.assetScaleFactor);
-    wall3.body.loadPolygon('physics', 'wall3');
-    wall3.body.static = true;
-    wall3.body.angle = 180;
-    wall3.body.setCollisionGroup(this.wallsCollisionGroup);
-    wall3.body.collides(this.asteroidCollisionGroup, null, this);
-    wall3.body.collides(this.playerCollisionGroup, null, this);
+    // var wall2 = this.game.add.sprite(200, 600, 'wall2');
+    // this.game.physics.p2.enable(wall2, this.DEBUG);
+    // wall2.body.clearShapes();
+    // wall2.scale.set(this.assetScaleFactor);
+    // wall2.body.loadPolygon('physics', 'wall2');
+    // wall2.body.static = true;
+    // wall2.body.angle = 180;
+    // wall2.body.setCollisionGroup(this.wallsCollisionGroup);
+    // wall2.body.collides(this.asteroidCollisionGroup, null, this);
+    // wall2.body.collides(this.playerCollisionGroup, null, this);
+
+    // var wall3 = this.game.add.sprite(1000, 150, 'wall3');
+    // this.game.physics.p2.enable(wall3, this.DEBUG);
+    // wall3.body.clearShapes();
+    // wall3.scale.set(this.assetScaleFactor);
+    // wall3.body.loadPolygon('physics', 'wall3');
+    // wall3.body.static = true;
+    // wall3.body.angle = 180;
+    // wall3.body.setCollisionGroup(this.wallsCollisionGroup);
+    // wall3.body.collides(this.asteroidCollisionGroup, null, this);
+    // wall3.body.collides(this.playerCollisionGroup, null, this);
+},
+loadLevel: function(){
+
+    this.countDownTime = this.game.time.create(true);
+
+    var style = { 
+      font: "64px Arial Black", 
+      fill: "#0037ff", 
+      align: "center" 
+    };
+
+    var counter = 0;
+
+    var text = this.game.add.text(this.game.world.centerX, this.game.world.centerY - 200, "", style);
+    text.anchor.setTo(0.5);
+    this.countDownTime.start();
+    this.countDownTime.loop(1000, function(){
+       counter++;
+       //text.setText(counter);
+       if (counter == 1){
+        text.setText(this.levelData.name);
+        //console.log(this.currentTaskid);
+        // this.updateTaskQuestion(this, this.currentTaskid);
+       }
+       else if (counter == 2){
+        text.setText("3");
+       }
+       else if (counter == 3) {
+        text.setText("2");
+       }
+       else if (counter == 4) {
+        text.setText("1");
+       }
+       else if (counter == 5){
+         this.countDownTime.stop();
+         text.destroy(); 
+         this.loadLevelTexts();
+         //creates 10 asteroids
+        var spawnP = [[100, 600], [105, 700], [220, 710], [985, 54], [1105, 74.7], [1118, 137], [380, 88], [815, 703], [974, 186], [215, 560],[587, 531], [603, 290]];
+        
+        for (var i = 0 ; i < 12 ; i++){
+            this.createRandomAsteroid(spawnP[i][0], spawnP[i][1]);
+        }
+
+       }
+    }, this)
+ 
 },
 
-loadLevel: function(){
-    //creates 10 asteroids
-    var spawnP = [[100, 600], [105, 700], [220, 710], [985, 54], [1105, 74.7], [1118, 137], [380, 88], [815, 703], [974, 186], [215, 560],[587, 531], [603, 290]];
+loadLevelTexts: function(){
+
+    //THE X VALUE
+        var scoreStyle = {
+            font: this.font1,
+            fontSize: '34px',
+            fill: 'white'
+        };
+        var scoreTextStyle = {
+            font: this.font1,
+            fontSize: '26px',
+            fill: 'white'
+        };
+
+        var xTimerStyle = {
+            font: this.font1,
+            fontSize: '30px',
+            fill: 'white'
+        }
+        var xChangeTextInfoStyle = {
+            font: this.font1,
+            fontSize: '14px',
+            fill: 'white'
+        }
+        var roundNameTextStyle = {
+            font: this.font1,
+            fontSize: '16px',
+            fill: 'white'
+        }
+
+    this.roundNoText = this.game.add.text(600, 355, this.levelData.name, roundNameTextStyle);
+    this.roundNoText.anchor.setTo(0.5);
+
+    this.xValueText = this.game.add.text(600, 385, 'x = ' + this.levelData.xValue, scoreStyle);
+    this.xValueText.anchor.setTo(0.5);
+    this.game.world.bringToTop(this.xValueText);
+
+    this.xValueChangeTextInfo = this.game.add.text(600, 420, "Aikaa muuttujan vaihtoon", xChangeTextInfoStyle);
+    this.xValueChangeTextInfo.anchor.setTo(0.5);
+    this.xValueChangeText = this.game.add.text(600, 450, "", xTimerStyle);
+    this.xValueChangeText.anchor.setTo(0.5);
+    this.game.world.bringToTop(this.xValueChangeText);
+
+    //set random value to x
+    this.levelData.xValue = this.levelData.xValues[Math.floor(Math.random() * this.levelData.xValues.length)];
+    this.xValueText.setText('x = ' + this.levelData.xValue)
+
+    this.xTimer = this.game.time.create(false);
+    this.xTimer.loop(1000 * this.levelData.xChangeTime + 3, function(){
+        //pop the current value from list and se x a new value
+        var values = this.levelData.xValues.slice();
+        var index = values.indexOf(this.levelData.xValue);
+        values.splice(index, 1);
+        this.levelData.xValue = values[Math.floor(Math.random() * values.length)];
+        this.xValueText.setText('x = ' + this.levelData.xValue)   
+
+        var tween1 = this.game.add.tween(this.xValueText.scale).to({x: 1.5, y:1.5}, 500, "Expo.easeOut", true);
+        var tween2 = this.game.add.tween(this.xValueText.scale).to({x: 1, y:1}, 500, "Expo.easeOut", false);
+        tween1.onComplete.add(function(){
+            tween2.start();
+        }, this);
+
+    }, this);
+    this.xTimer.start();
+
+    //player scoreTexts
+    this.redPlayerScoreText = this.game.add.text(this.redData.scoreText.x, this.redData.scoreText.y, this.redData.score, scoreStyle);
+    this.redPlayerScoreText.anchor.setTo(0.5);
     
-    for (var i = 0 ; i < 12 ; i++){
-        this.createRandomAsteroid(spawnP[i][0], spawnP[i][1]);
-    }
-  },
+    this.bluePlayerScoreText = this.game.add.text(this.blueData.scoreText.x, this.blueData.scoreText.y, this.blueData.score, scoreStyle);
+    this.bluePlayerScoreText.anchor.setTo(0.5);
+    
+    var scoreText = this.game.add.text(this.bluePlayerScoreText.x, this.bluePlayerScoreText.y + 30, "SCORE", scoreTextStyle);
+    scoreText.anchor.setTo(0.5);
+    // scoreText.fill = 'blue';
+
+    var scoreText = this.game.add.text(this.redPlayerScoreText.x, this.redPlayerScoreText.y - 30, "SCORE", scoreTextStyle);
+    scoreText.anchor.setTo(0.5);
+    // scoreText.fill = 'red';
+},
 
 render: function() {
 
@@ -412,10 +517,31 @@ render: function() {
     // this.game.debug.spriteInfo(this.shipBlue, 32, 32);
 
 },
+
+materialsSetUp: function(){
+    this.asteroidMaterial = this.game.physics.p2.createMaterial('asteroidMaterial');
+    this.shipMaterial = this.game.physics.p2.createMaterial('shipMaterial');
+    this.game.physics.p2.setMaterial(this.shipMaterial, [this.shipRed.body, this.shipBlue.body]);
+    
+    this.asteroidShipContactMaterial = this.game.physics.p2.createContactMaterial(this.shipMaterial, this.asteroidMaterial);
+    this.asteroidShipContactMaterial.restitution = 0;
+    this.asteroidShipContactMaterial.relaxation = 15;
+    // this.asteroidShipContactMaterial.frictionStiffness = 1e7;
+    // this.asteroidShipContactMaterial.frictionRelaxation = 15;
+    this.asteroidShipContactMaterial.surfaceVelocity = 0;
+    this.asteroidShipContactMaterial.friction = 1;
+
+    this.asteroidAsteroidContactMaterial = this.game.physics.p2.createContactMaterial(this.asteroidMaterial, this.asteroidMaterial);
+    this.asteroidAsteroidContactMaterial.restitution = 0.7;
+
+    this.shipShipContactMaterial = this.game.physics.p2.createContactMaterial(this.shipMaterial, this.shipMaterial);
+    this.shipShipContactMaterial.restitution = 2.0;
+},
+
 createRandomAsteroid: function(xCoord, yCoord){
     //create random place in game area
     //spawn areas
-    var spawnP = [[100, 600], [105, 700], [220, 710], [985, 54], [1105, 74.7], [1118, 137], [380, 88], [815, 703], [974, 186], [215, 560],[587, 531], [603, 290]];
+    var spawnP = this.levelData.spawnCoords;
     
     var xy = spawnP[Math.floor(Math.random()* spawnP.length)];
     var x = this.game.rnd.integerInRange(-15, 15);
@@ -423,7 +549,7 @@ createRandomAsteroid: function(xCoord, yCoord){
 
     //check if x and y dont overlap with walls
     var data = {}
-    data.color = this.colors[Math.floor(Math.random()*this.colors.length)];
+    data.color = this.levelData.colors[Math.floor(Math.random()*this.levelData.colors.length)];
     data.physic = data.texture;
     // data.mass = Math.random() * 10;
     data.mass = 1;
@@ -433,7 +559,7 @@ createRandomAsteroid: function(xCoord, yCoord){
 
     //if coordinates as arguments, set them
     if(xCoord && yCoord){
-        console.log("Here");
+        // console.log("Here");
         xy = [xCoord, yCoord];
     }
 
@@ -550,8 +676,8 @@ updateShipScore: function(shipColor, valueText){
             player.collecting = false;
             
 
-        }, this);
-    }, this);
+        }, this, true);
+    }, this, true);
 },
 
 parseText: function(text, replace, replacement){
@@ -584,7 +710,7 @@ parseText: function(text, replace, replacement){
     return text
 },
 testTasks: function(){
-    var valueData = Object.values(JSON.parse(this.game.cache.getText('values')));
+    var valueData = Object.values(JSON.parse(this.game.cache.getText(this.levelData.jsonValues)));
     var x = -1
     for (var i = 0 ; i < valueData.length ; i++){
         eval(valueData[i].valueNeg.replace(/x/g, x));

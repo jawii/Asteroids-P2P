@@ -13,8 +13,9 @@ AsteroidMath.PreloadState = {
     this.load.image('sky', 'assets/images/sky.png');
 
     //floors and walls
-    this.load.image('background', 'assets/images/background.png')
-    // this.load.image('corners', 'assets/images/gamearea.png');
+
+    //LVL2
+    this.load.image('background2', 'assets/images/background2.png')
     this.load.image('wall1', 'assets/images/wall1.png');
     this.load.image('wall2', 'assets/images/wall2.png');
     this.load.image('wall3', 'assets/images/wall3.png');
@@ -28,7 +29,7 @@ AsteroidMath.PreloadState = {
     this.load.image('4x4_blue', 'assets/images/4x4_blue.png');
 
     //load values
-    this.load.text('values', 'js/data/values.json');
+    this.load.text('values1', 'js/data/values1.json');
     // this.load.text('values', 'js/data/valuesTest.json');
     
     //emitter
