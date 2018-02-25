@@ -8,7 +8,7 @@ init: function(currentLevel) {
     // this.MAX_SPEED_SHOOT = 1000;
     // this.SHOOT_FACTOR = 12;
     this.THRUST = 200;
-    this.DEBUG = true;
+    // this.DEBUG = true;
     this.DEBUG = false;
     this.SHIPMASS = 1;
 
@@ -17,36 +17,68 @@ init: function(currentLevel) {
     this.assetScaleFactor = 0.25;
 
     this.levelData = {
-        name: "Round 2",
+        name: "Round 1",
         jsonValues: 'values1',
-        background: 'background2',
-        walls: {wall1: {x:600, y: 400, angle: 0}, wall2: {x:200, y: 600, angle: 180}, wall3: {x: 1000, y: 150, angle: 180}},
+        textColor: 'black',
+        background: 'background1',
+        walls: {wall4: {x:600, y: 400, angle: 0}},
         xValue: -2,
-        xValues: [-3, -2, -1, 0, 1, 2, 3],
+        xValues: [1, 2, 3],
         xChangeTime: 90,
         colors: ['0xfbb03b', '0xFFFF00', '0x00FFFF', "0x0071bc", "0x7ac943", "0x3fa9f5"],
-        spawnCoords: [[100, 600], [105, 700], [220, 710], [985, 54], [1105, 74.7], [1118, 137], [380, 88], [815, 703], [974, 186], [215, 560],[587, 531], [603, 290]],
-        //BLUEDATA
-        BLUEspawn: {x: 150, y: 130},
-        BLUEhomeArea: {x1: 25, x2: 225, y1: 25, y2: 125},
+        spawnCoords: [[170, 120], [170, 240], [170, 550], [170, 670], [950, 120], [950, 240], [950, 550], [950, 670], [600, 150], [600, 240],[600, 550], [600, 670]],
+        BLUEspawn: {x: 240, y: 400},
+        BLUEhomeArea: {x1: 0, x2: 190, y1: 317, y2: 487},
         BLUEangle: 135,
         BLUEscore: 0,
-        BLUEscoreText: {x: 263, y: 170},
+        BLUEscoreText: {x: 50, y: 50},
         BLUEcollecting: false,
         BLUEanswerTextWithX: this.game.add.text(),
         BLUEanswerTextWithOutX: this.game.add.text(),
-        BLUEgravityLine: {x1: 80, y1: 235, x2: 165, y2: 235},
+        BLUEgravityLine: {x1: 213, y1: 353, x2: 213, y2: 450},
         //REDDATA
-        REDspawn: {x: 1060, y: 550},
-        REDhomeArea: {x1: 975, x2: 1176, y1: 680, y2: 775},
+        REDspawn: {x: 800, y: 400},
+        REDhomeArea: {x1: 1030, x2: 1200, y1: 317, y2: 487},
         REDangle: -45,
         REDscore: 0,
-        REDscoreText: {x: 930, y: 675},
+        REDscoreText: {x: 1150, y: 750},
         REDcollecting: false,
         REDanswerTextWithX: this.game.add.text(),
         REDanswerTextWithOutX: this.game.add.text(),
-        REDgravityLine: {x1: 1040, y1: 600, x2: 1140, y2: 600},
+        REDgravityLine: {x1: 988, y1: 353, x2: 988, y2: 450},
     };
+    // this.levelData = {
+    //     name: "Round 2",
+    //     jsonValues: 'values2',
+    //     background: 'background2',
+    //     walls: {wall1: {x:600, y: 400, angle: 0}, wall2: {x:200, y: 600, angle: 180}, wall3: {x: 1000, y: 150, angle: 180}},
+    //     textColor: 'white',
+    //     xValue: -2,
+    //     xValues: [-3, -2, -1, 0, 1, 2, 3],
+    //     xChangeTime: 90,
+    //     colors: ['0xfbb03b', '0xFFFF00', '0x00FFFF', "0x0071bc", "0x7ac943", "0x3fa9f5"],
+    //     spawnCoords: [[100, 600], [105, 700], [220, 710], [985, 54], [1105, 74.7], [1118, 137], [380, 88], [815, 703], [974, 186], [215, 560],[587, 531], [603, 290]],
+    //     //BLUEDATA
+    //     BLUEspawn: {x: 150, y: 130},
+    //     BLUEhomeArea: {x1: 25, x2: 225, y1: 25, y2: 125},
+    //     BLUEangle: 135,
+    //     BLUEscore: 0,
+    //     BLUEscoreText: {x: 263, y: 170},
+    //     BLUEcollecting: false,
+    //     BLUEanswerTextWithX: this.game.add.text(),
+    //     BLUEanswerTextWithOutX: this.game.add.text(),
+    //     BLUEgravityLine: {x1: 80, y1: 235, x2: 165, y2: 235},
+    //     //REDDATA
+    //     REDspawn: {x: 1060, y: 550},
+    //     REDhomeArea: {x1: 975, x2: 1176, y1: 680, y2: 775},
+    //     REDangle: -45,
+    //     REDscore: 0,
+    //     REDscoreText: {x: 930, y: 675},
+    //     REDcollecting: false,
+    //     REDanswerTextWithX: this.game.add.text(),
+    //     REDanswerTextWithOutX: this.game.add.text(),
+    //     REDgravityLine: {x1: 1040, y1: 600, x2: 1140, y2: 600},
+    // };
 
     this.blueData = {};
     this.blueData.spawn = this.levelData.BLUEspawn;
@@ -318,11 +350,11 @@ createBackground: function(){
     redGravityEmitter.addToWorld();
     redGravityEmitter.emit('basic', 0, 0, { zone: line, total: 2, repeat: -1, frequency: 150 });
     //background
-    var background = this.game.add.sprite(this.game.width/2, this.game.height/2, 'background2');
+    var background = this.game.add.sprite(this.game.width/2, this.game.height/2, this.levelData.background);
     this.game.physics.p2.enable(background, this.DEBUG);
     background.body.clearShapes();
     background.scale.set(0.5);
-    background.body.loadPolygon('physics', 'background2');
+    background.body.loadPolygon('physics', this.levelData.background);
     background.body.static = true;
     // console.log(background.body.y);
     background.body.setCollisionGroup(this.wallsCollisionGroup);
@@ -348,39 +380,6 @@ createBackground: function(){
             wall.body.collides(this.playerCollisionGroup, null, this);
         }, this);
     }
-    // //WALLS
-    // var wall1 = this.game.add.sprite(600, 400, 'wall1');
-    // this.game.physics.p2.enable(wall1, this.DEBUG);
-    // wall1.body.clearShapes();
-    // wall1.scale.set(this.assetScaleFactor);
-    // wall1.body.loadPolygon('physics', 'wall1');
-    // wall1.body.static = true;
-    // wall1.body.setCollisionGroup(this.wallsCollisionGroup);
-    // wall1.body.collides(this.asteroidCollisionGroup, null, this);
-    // wall1.body.collides(this.playerCollisionGroup, null, this);
-    // // background.body.debug = true;
-
-    // var wall2 = this.game.add.sprite(200, 600, 'wall2');
-    // this.game.physics.p2.enable(wall2, this.DEBUG);
-    // wall2.body.clearShapes();
-    // wall2.scale.set(this.assetScaleFactor);
-    // wall2.body.loadPolygon('physics', 'wall2');
-    // wall2.body.static = true;
-    // wall2.body.angle = 180;
-    // wall2.body.setCollisionGroup(this.wallsCollisionGroup);
-    // wall2.body.collides(this.asteroidCollisionGroup, null, this);
-    // wall2.body.collides(this.playerCollisionGroup, null, this);
-
-    // var wall3 = this.game.add.sprite(1000, 150, 'wall3');
-    // this.game.physics.p2.enable(wall3, this.DEBUG);
-    // wall3.body.clearShapes();
-    // wall3.scale.set(this.assetScaleFactor);
-    // wall3.body.loadPolygon('physics', 'wall3');
-    // wall3.body.static = true;
-    // wall3.body.angle = 180;
-    // wall3.body.setCollisionGroup(this.wallsCollisionGroup);
-    // wall3.body.collides(this.asteroidCollisionGroup, null, this);
-    // wall3.body.collides(this.playerCollisionGroup, null, this);
 },
 loadLevel: function(){
 
@@ -418,10 +417,10 @@ loadLevel: function(){
          this.countDownTime.stop();
          text.destroy(); 
          this.loadLevelTexts();
-         //creates 10 asteroids
-        var spawnP = [[100, 600], [105, 700], [220, 710], [985, 54], [1105, 74.7], [1118, 137], [380, 88], [815, 703], [974, 186], [215, 560],[587, 531], [603, 290]];
+         //creates 10 asteroidwaas
+        var spawnP = this.levelData.spawnCoords;1
         
-        for (var i = 0 ; i < 12 ; i++){
+        for (var i = 0 ; i < this.levelData.spawnCoords.length ; i++){
             this.createRandomAsteroid(spawnP[i][0], spawnP[i][1]);
         }
 
@@ -436,28 +435,28 @@ loadLevelTexts: function(){
         var scoreStyle = {
             font: this.font1,
             fontSize: '34px',
-            fill: 'white'
+            fill: this.levelData.textColor
         };
         var scoreTextStyle = {
             font: this.font1,
             fontSize: '26px',
-            fill: 'white'
+            fill: this.levelData.textColor
         };
 
         var xTimerStyle = {
             font: this.font1,
             fontSize: '30px',
-            fill: 'white'
+            fill: this.levelData.textColor
         }
         var xChangeTextInfoStyle = {
             font: this.font1,
             fontSize: '14px',
-            fill: 'white'
+            fill: this.levelData.textColor
         }
         var roundNameTextStyle = {
             font: this.font1,
             fontSize: '16px',
-            fill: 'white'
+            fill: this.levelData.textColor
         }
 
     this.roundNoText = this.game.add.text(600, 355, this.levelData.name, roundNameTextStyle);
@@ -535,7 +534,7 @@ materialsSetUp: function(){
     this.asteroidAsteroidContactMaterial.restitution = 0.7;
 
     this.shipShipContactMaterial = this.game.physics.p2.createContactMaterial(this.shipMaterial, this.shipMaterial);
-    this.shipShipContactMaterial.restitution = 2.0;
+    this.shipShipContactMaterial.restitution = 3.0;
 },
 
 createRandomAsteroid: function(xCoord, yCoord){
@@ -668,7 +667,7 @@ updateShipScore: function(shipColor, valueText){
             player.answerTextWithX.kill();
         }, this);
 
-        this.game.time.events.add(Phaser.Timer.SECOND * 6, function(){
+        this.game.time.events.add(Phaser.Timer.SECOND * 5, function(){
             player.answerTextWithOutX.kill();
             player.score += value
             this.bluePlayerScoreText.setText(this.blueData.score);

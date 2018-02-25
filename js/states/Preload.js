@@ -14,8 +14,11 @@ AsteroidMath.PreloadState = {
 
     //floors and walls
 
+    //LVL1
+    this.load.image('background1', 'assets/images/background1.png');
+    this.load.image('wall4', 'assets/images/wall4.png');
     //LVL2
-    this.load.image('background2', 'assets/images/background2.png')
+    this.load.image('background2', 'assets/images/background2.png');
     this.load.image('wall1', 'assets/images/wall1.png');
     this.load.image('wall2', 'assets/images/wall2.png');
     this.load.image('wall3', 'assets/images/wall3.png');
@@ -30,6 +33,7 @@ AsteroidMath.PreloadState = {
 
     //load values
     this.load.text('values1', 'js/data/values1.json');
+    this.load.text('values2', 'js/data/values2.json');
     // this.load.text('values', 'js/data/valuesTest.json');
     
     //emitter
