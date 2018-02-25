@@ -2,7 +2,7 @@ var AsteroidMath = AsteroidMath || {};
 
 AsteroidMath.GameState = {
 
-init: function(currentLevel) {    
+init: function(levelData) {    
     //constants
     // this.MAX_DISTANCE_SHOOT = 190;
     // this.MAX_SPEED_SHOOT = 1000;
@@ -16,70 +16,8 @@ init: function(currentLevel) {
     this.font1 = "inconsolataregular";
     this.assetScaleFactor = 0.25;
 
-    this.levelData = {
-        name: "Round 1",
-        jsonValues: 'values1',
-        textColor: 'black',
-        background: 'background1',
-        walls: {wall4: {x:600, y: 400, angle: 0}},
-        xValue: -2,
-        xValues: [1, 2, 3],
-        xChangeTime: 90,
-        colors: ['0xfbb03b', '0xFFFF00', '0x00FFFF', "0x0071bc", "0x7ac943", "0x3fa9f5"],
-        spawnCoords: [[170, 120], [170, 240], [170, 550], [170, 670], [950, 120], [950, 240], [950, 550], [950, 670], [600, 150], [600, 240],[600, 550], [600, 670]],
-        BLUEspawn: {x: 240, y: 400},
-        BLUEhomeArea: {x1: 0, x2: 190, y1: 317, y2: 487},
-        BLUEangle: 135,
-        BLUEscore: 0,
-        BLUEscoreText: {x: 50, y: 50},
-        BLUEcollecting: false,
-        BLUEanswerTextWithX: this.game.add.text(),
-        BLUEanswerTextWithOutX: this.game.add.text(),
-        BLUEgravityLine: {x1: 213, y1: 353, x2: 213, y2: 450},
-        //REDDATA
-        REDspawn: {x: 800, y: 400},
-        REDhomeArea: {x1: 1030, x2: 1200, y1: 317, y2: 487},
-        REDangle: -45,
-        REDscore: 0,
-        REDscoreText: {x: 1150, y: 750},
-        REDcollecting: false,
-        REDanswerTextWithX: this.game.add.text(),
-        REDanswerTextWithOutX: this.game.add.text(),
-        REDgravityLine: {x1: 988, y1: 353, x2: 988, y2: 450},
-    };
-    // this.levelData = {
-    //     name: "Round 2",
-    //     jsonValues: 'values2',
-    //     background: 'background2',
-    //     walls: {wall1: {x:600, y: 400, angle: 0}, wall2: {x:200, y: 600, angle: 180}, wall3: {x: 1000, y: 150, angle: 180}},
-    //     textColor: 'white',
-    //     xValue: -2,
-    //     xValues: [-3, -2, -1, 0, 1, 2, 3],
-    //     xChangeTime: 90,
-    //     colors: ['0xfbb03b', '0xFFFF00', '0x00FFFF', "0x0071bc", "0x7ac943", "0x3fa9f5"],
-    //     spawnCoords: [[100, 600], [105, 700], [220, 710], [985, 54], [1105, 74.7], [1118, 137], [380, 88], [815, 703], [974, 186], [215, 560],[587, 531], [603, 290]],
-    //     //BLUEDATA
-    //     BLUEspawn: {x: 150, y: 130},
-    //     BLUEhomeArea: {x1: 25, x2: 225, y1: 25, y2: 125},
-    //     BLUEangle: 135,
-    //     BLUEscore: 0,
-    //     BLUEscoreText: {x: 263, y: 170},
-    //     BLUEcollecting: false,
-    //     BLUEanswerTextWithX: this.game.add.text(),
-    //     BLUEanswerTextWithOutX: this.game.add.text(),
-    //     BLUEgravityLine: {x1: 80, y1: 235, x2: 165, y2: 235},
-    //     //REDDATA
-    //     REDspawn: {x: 1060, y: 550},
-    //     REDhomeArea: {x1: 975, x2: 1176, y1: 680, y2: 775},
-    //     REDangle: -45,
-    //     REDscore: 0,
-    //     REDscoreText: {x: 930, y: 675},
-    //     REDcollecting: false,
-    //     REDanswerTextWithX: this.game.add.text(),
-    //     REDanswerTextWithOutX: this.game.add.text(),
-    //     REDgravityLine: {x1: 1040, y1: 600, x2: 1140, y2: 600},
-    // };
-
+    this.levelData = levelData;
+    
     this.blueData = {};
     this.blueData.spawn = this.levelData.BLUEspawn;
     this.blueData.homeArea = this.levelData.BLUEhomeArea;
@@ -89,8 +27,6 @@ init: function(currentLevel) {
     this.blueData.score = this.levelData.BLUEscore;
     this.blueData.scoreText = this.levelData.BLUEscoreText;
     this.blueData.collecting = this.levelData.BLUEcollecting;
-    this.blueData.answerTextWithX = this.levelData.BLUEanswerTextWithX;
-    this.blueData.answerTextWithOutX = this.levelData.BLUEanswerTextWithOutX;
     this.blueData.gravityLine = this.levelData.BLUEgravityLine;
 
     this.redData = {};
@@ -102,13 +38,14 @@ init: function(currentLevel) {
     this.redData.score = this.levelData.REDscore;
     this.redData.scoreText = this.levelData.REDscoreText;
     this.redData.collecting = this.levelData.REDcollecting;
-    this.redData.answerTextWithX = this.levelData.REDanswerTextWithX;
-    this.redData.answerTextWithOutX = this.levelData.REDanswerTextWithOutX;
     this.redData.gravityLine = this.levelData.REDgravityLine;
-    
-    //keep track of the current level
-    this.currentLevel = currentLevel ? currentLevel : 'level1';
 
+
+    this.redData.answerTextWithX = this.game.add.text();
+    this.redData.answerTextWithOutX = this.game.add.text();
+    this.blueData.answerTextWithX = this.game.add.text();
+    this.blueData.answerTextWithOutX = this.game.add.text();
+    
     //initiate physics system
     this.game.physics.startSystem(Phaser.Physics.P2JS);
 
@@ -309,8 +246,8 @@ createShips: function(){
     // this.redFire = this.game.input.keyboard.addKey(Phaser.Keyboard.Q);
   },
 
-gameOver: function() {
-    this.game.state.start('Game', true, false, this.currentLevel);
+roundEnd: function() {
+    this.game.state.start('Game', true, false, this.levelData.nextLevel);
   },
 createBackground: function(){
     //create gravity wells
@@ -425,10 +362,8 @@ loadLevel: function(){
         }
 
        }
-    }, this)
- 
+    }, this);
 },
-
 loadLevelTexts: function(){
 
     //THE X VALUE
@@ -459,16 +394,16 @@ loadLevelTexts: function(){
             fill: this.levelData.textColor
         }
 
-    this.roundNoText = this.game.add.text(600, 355, this.levelData.name, roundNameTextStyle);
+    this.roundNoText = this.game.add.text(600, 350, this.levelData.name, roundNameTextStyle);
     this.roundNoText.anchor.setTo(0.5);
 
-    this.xValueText = this.game.add.text(600, 385, 'x = ' + this.levelData.xValue, scoreStyle);
+    this.xValueText = this.game.add.text(600, 370, 'x = ' + this.levelData.xValue, scoreStyle);
     this.xValueText.anchor.setTo(0.5);
     this.game.world.bringToTop(this.xValueText);
 
-    this.xValueChangeTextInfo = this.game.add.text(600, 420, "Aikaa muuttujan vaihtoon", xChangeTextInfoStyle);
+    this.xValueChangeTextInfo = this.game.add.text(600, 395, "Aikaa muuttujan vaihtoon", xChangeTextInfoStyle);
     this.xValueChangeTextInfo.anchor.setTo(0.5);
-    this.xValueChangeText = this.game.add.text(600, 450, "", xTimerStyle);
+    this.xValueChangeText = this.game.add.text(600, 420, "", xTimerStyle);
     this.xValueChangeText.anchor.setTo(0.5);
     this.game.world.bringToTop(this.xValueChangeText);
 
@@ -490,9 +425,28 @@ loadLevelTexts: function(){
         tween1.onComplete.add(function(){
             tween2.start();
         }, this);
-
     }, this);
-    this.xTimer.start();
+     this.xTimer.start();
+
+
+    //NEXT ROUND
+    this.nextRoundText = this.game.add.text(600, 450, "Next round:" + this.levelData.roundTime, xChangeTextInfoStyle)
+    this.nextRoundText.anchor.setTo(0.5);
+
+    this.roundTimer = this.game.time.create(true);
+    this.roundTimerCount = 1;
+    this.roundTimer.loop(1000, function(){
+        this.nextRoundText.setText("Next round:" + (this.levelData.roundTime - this.roundTimerCount));
+        this.roundTimerCount++;
+
+        if(this.levelData.roundTime - this.roundTimerCount <= 0){
+            if(!this.levelData.isLastRound){
+                this.roundEnd();
+            }
+        }
+    }, this);
+    this.roundTimer.start();
+    
 
     //player scoreTexts
     this.redPlayerScoreText = this.game.add.text(this.redData.scoreText.x, this.redData.scoreText.y, this.redData.score, scoreStyle);
@@ -509,14 +463,12 @@ loadLevelTexts: function(){
     scoreText.anchor.setTo(0.5);
     // scoreText.fill = 'red';
 },
-
 render: function() {
 
     // Sprite debug info
     // this.game.debug.spriteInfo(this.shipBlue, 32, 32);
 
 },
-
 materialsSetUp: function(){
     this.asteroidMaterial = this.game.physics.p2.createMaterial('asteroidMaterial');
     this.shipMaterial = this.game.physics.p2.createMaterial('shipMaterial');
@@ -536,7 +488,6 @@ materialsSetUp: function(){
     this.shipShipContactMaterial = this.game.physics.p2.createContactMaterial(this.shipMaterial, this.shipMaterial);
     this.shipShipContactMaterial.restitution = 3.0;
 },
-
 createRandomAsteroid: function(xCoord, yCoord){
     //create random place in game area
     //spawn areas
@@ -571,17 +522,16 @@ createRandomAsteroid: function(xCoord, yCoord){
     }
     return newElement;
 }, 
-
 asteroidCollide: function(ship, asteroid){
         asteroid.sprite.valuetext.visible = true;
         this.game.time.events.add(Phaser.Timer.SECOND * 5, function(){
             asteroid.sprite.valuetext.visible = false;
         }, this);
-
 },
 updateShipScore: function(shipColor, valueText){
     // console.log(valueText);
     var player = (shipColor == 'blue') ? this.blueData : this.redData;
+    console.log(player);
 
     //convert X from valueText to current text and evaluate it
     var value = eval(valueText.value.replace(/x/g, this.levelData.xValue));
@@ -614,7 +564,9 @@ updateShipScore: function(shipColor, valueText){
         textX = player.homeArea.x1 + 50;
         textY = player.homeArea.y1 + 10;
     }
-    
+    this.game.world.bringToTop(player.answerTextWithX);   
+    this.game.world.bringToTop(player.answerTextWithOutX);   
+
     player.answerTextWithX.reset();
     player.answerTextWithX.x = textX;
     player.answerTextWithX.y = textY;
