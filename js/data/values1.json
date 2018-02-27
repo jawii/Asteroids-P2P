@@ -71,7 +71,7 @@
 	},
 	"value15": {
 		"text": "x^2",
-		"value": "x^2",
-		"valueNeg": "(x)^2"
+		"value": "x*x",
+		"valueNeg": "x * (x)"
 	}
 }

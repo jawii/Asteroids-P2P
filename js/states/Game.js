@@ -120,22 +120,23 @@ create: function() {
 update: function() {
 
     //timer
-    if(this.xValueChangeText){
-        this.xValueChangeText.setText(Math.ceil(this.xTimer.duration / 1000));
-        this.xValueChangeText.fill = 'white';
-        if(this.xTimer.duration / 1000 < 10){
-            this.xValueChangeText.fill = 'red';
-        }
-        else if(this.xTimer.duration / 1000 < 30){
-            this.xValueChangeText.fill = 'orange';
-        }
-        else if(this.xTimer.duration / 1000 < this.levelData.xChangeTime){
-            this.xValueChangeText.fill = 'green';
-        }
-        else{
-            this.xValueChangeText.setText(this.levelData.xChangeTime);
-        }
-    }
+    // if(this.xValueChangeText){
+    //     this.xValueChangeText.setText(Math.ceil(this.xTimer.duration / 1000));
+    //     this.xValueChangeText.fill = 'white';
+    //     if(this.xTimer.duration / 1000 < 10){
+    //         this.xValueChangeText.fill = 'red';
+    //     }
+    //     else if(this.xTimer.duration / 1000 < 30){
+    //         this.xValueChangeText.fill = 'orange';
+    //     }
+    //     else if(this.xTimer.duration / 1000 < this.levelData.xChangeTime){
+    //         this.xValueChangeText.fill = 'green';
+    //     }
+    //     else{
+    //         this.xValueChangeText.setText(this.levelData.xChangeTime);
+    //     }
+    // }
+
     //ship movement
     if (this.cursors.left.isDown){this.shipBlue.body.rotateLeft(50);}
     else if(this.cursors.right.isDown){this.shipBlue.body.rotateRight(50);}
@@ -355,7 +356,7 @@ loadLevel: function(){
          text.destroy(); 
          this.loadLevelTexts();
          //creates 10 asteroidwaas
-        var spawnP = this.levelData.spawnCoords;1
+        var spawnP = this.levelData.spawnCoords;
         
         for (var i = 0 ; i < this.levelData.spawnCoords.length ; i++){
             this.createRandomAsteroid(spawnP[i][0], spawnP[i][1]);
@@ -386,7 +387,7 @@ loadLevelTexts: function(){
         var xChangeTextInfoStyle = {
             font: this.font1,
             fontSize: '14px',
-            fill: this.levelData.textColor
+            fill: 'black'
         }
         var roundNameTextStyle = {
             font: this.font1,
@@ -401,17 +402,13 @@ loadLevelTexts: function(){
     this.xValueText.anchor.setTo(0.5);
     this.game.world.bringToTop(this.xValueText);
 
-    this.xValueChangeTextInfo = this.game.add.text(600, 395, "Aikaa muuttujan vaihtoon", xChangeTextInfoStyle);
-    this.xValueChangeTextInfo.anchor.setTo(0.5);
-    this.xValueChangeText = this.game.add.text(600, 420, "", xTimerStyle);
-    this.xValueChangeText.anchor.setTo(0.5);
-    this.game.world.bringToTop(this.xValueChangeText);
-
     //set random value to x
     this.levelData.xValue = this.levelData.xValues[Math.floor(Math.random() * this.levelData.xValues.length)];
     this.xValueText.setText('x = ' + this.levelData.xValue)
 
-    this.xTimer = this.game.time.create(false);
+
+
+    this.xTimer = this.game.time.create(true);
     this.xTimer.loop(1000 * this.levelData.xChangeTime + 3, function(){
         //pop the current value from list and se x a new value
         var values = this.levelData.xValues.slice();
@@ -426,26 +423,81 @@ loadLevelTexts: function(){
             tween2.start();
         }, this);
     }, this);
-     this.xTimer.start();
 
+    this.xTimer.start();
 
-    //NEXT ROUND
-    this.nextRoundText = this.game.add.text(600, 450, "Next round:" + this.levelData.roundTime, xChangeTextInfoStyle)
+    //NEXT ROUND PROGRESS BAR BG
+    var barX = 515;
+    var barY = 412;
+    var barWidth = 170;
+    var barHeight = 20;
+    var barAlpha = 0.25;
+
+    this.nextRoundBarBG = this.game.add.graphics(0,0);
+    this.nextRoundBarBG.lineStyle(2, '0xFF0000');
+    this.nextRoundBarBG.beginFill('0xFF0000', barAlpha) 
+    this.nextRoundBarBG.drawRoundedRect(barX, barY, barWidth, barHeight, 1);
+    this.nextRoundBarBG.endFill();
+    //PROGRESS BAR 
+    this.nextRoundBar = this.game.add.graphics(0,0);
+    //TEXT
+    this.nextRoundText = this.game.add.text(600, barY + 13, "Seuraava taso", xChangeTextInfoStyle)
     this.nextRoundText.anchor.setTo(0.5);
-
+    //TIMER
     this.roundTimer = this.game.time.create(true);
-    this.roundTimerCount = 1;
-    this.roundTimer.loop(1000, function(){
-        this.nextRoundText.setText("Next round:" + (this.levelData.roundTime - this.roundTimerCount));
-        this.roundTimerCount++;
-
+    this.roundTimerCount = 0;
+    this.roundTimer.loop(250, function(){
+            var width = (barWidth * this.roundTimerCount)/this.levelData.roundTime
+            if(width > 0){
+                this.nextRoundBar.clear();
+                this.nextRoundBar.lineStyle(2, '0x00FF00');
+                this.nextRoundBar.beginFill('0x00FF00', 1) 
+                this.nextRoundBar.drawRoundedRect(barX, barY, width, barHeight, 1);
+                this.nextRoundBar.endFill();
+            }
         if(this.levelData.roundTime - this.roundTimerCount <= 0){
             if(!this.levelData.isLastRound){
                 this.roundEnd();
             }
         }
+        this.roundTimerCount += 0.25;
     }, this);
     this.roundTimer.start();
+
+
+    //XCHANGEBAR
+
+    
+    //xChangeBar
+    var barX1 = 515;
+    var barY2 = 385;
+    var barWidth2 = 170;
+    var barHeight2 = 20;
+    this.xChangeBarBG = this.game.add.graphics(0,0);
+    this.xChangeBarBG.lineStyle(2, '0xFF0000');
+    this.xChangeBarBG.beginFill('0xFF0000', barAlpha) 
+    this.xChangeBarBG.drawRoundedRect(barX1, barY2, barWidth2, barHeight2, 1);
+    this.xChangeBarBG.endFill();
+    //xChangeBar 
+    this.xChangeBar = this.game.add.graphics(0,0);
+
+    this.xValueChangeTextInfo = this.game.add.text(600, barY2 + 12, "Aikaa muuttujan vaihtoon", xChangeTextInfoStyle);
+    this.xValueChangeTextInfo.anchor.setTo(0.5);
+
+    this.xChangeTimer = this.game.time.create(true);
+    this.xChangeTimer.loop(250, function(){
+        //xChangeBar
+        var width = ((barWidth2 * this.roundTimerCount)/this.levelData.xChangeTime) % barWidth2
+        if(width > 0){
+            this.xChangeBar.clear();
+            this.xChangeBar.lineStyle(2, '0x00FF00');
+            this.xChangeBar.beginFill('0x00FF00', 1) 
+            this.xChangeBar.drawRoundedRect(barX1, barY2, width, barHeight2, 1);
+            this.xChangeBar.endFill();
+        }
+
+    }, this);
+    this.xChangeTimer.start();
     
 
     //player scoreTexts
@@ -492,6 +544,7 @@ createRandomAsteroid: function(xCoord, yCoord){
     //create random place in game area
     //spawn areas
     var spawnP = this.levelData.spawnCoords;
+    // console.log(spawnP);
     
     var xy = spawnP[Math.floor(Math.random()* spawnP.length)];
     var x = this.game.rnd.integerInRange(-15, 15);
@@ -518,7 +571,7 @@ createRandomAsteroid: function(xCoord, yCoord){
       this.asteroids.add(newElement);
     }
     else{
-      newElement.reset(x, y, data);
+      newElement.reset(xy[0] + x, xy[1] + y, data);
     }
     return newElement;
 }, 

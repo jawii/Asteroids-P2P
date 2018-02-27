@@ -42,7 +42,7 @@ AsteroidMath.MenuState = {
       jsonValues: 'values1',
       isLastRound: false,
       nextLevel: AsteroidMath.MenuState.levelData2,
-      roundTime: 1 * 5,
+      roundTime: 4 * 60,
       textColor: 'black',
       background: 'background1',
       walls: {wall4: {x:600, y: 400, angle: 0}},
