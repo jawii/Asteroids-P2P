@@ -7,11 +7,13 @@ init: function(levelData) {
     // this.MAX_DISTANCE_SHOOT = 190;
     // this.MAX_SPEED_SHOOT = 1000;
     // this.SHOOT_FACTOR = 12;
-    this.THRUST = 200;
+    this.THRUST = 350;
     // this.DEBUG = true;
     this.DEBUG = false;
     this.SHIPMASS = 1;
-
+    this.SHIPBODYDAMPING = 0.4;
+    this.ASTEROIDBODYDAMPING = 0.5;
+    this.gameOn = true;
     this.font2 = "source_sans_prosemibold";
     this.font1 = "inconsolataregular";
     this.assetScaleFactor = 0.25;
@@ -24,7 +26,7 @@ init: function(levelData) {
     this.blueData.getWidth = function(){return this.homeArea.x2 - this.homeArea.x1};
     this.blueData.getHeight = function(){return this.homeArea.y2 - this.homeArea.y1};
     this.blueData.angle = this.levelData.BLUEangle;
-    this.blueData.score = this.levelData.BLUEscore;
+    this.blueData.score = 0;
     this.blueData.scoreText = this.levelData.BLUEscoreText;
     this.blueData.collecting = this.levelData.BLUEcollecting;
     this.blueData.gravityLine = this.levelData.BLUEgravityLine;
@@ -35,7 +37,7 @@ init: function(levelData) {
     this.redData.getWidth = function(){return this.homeArea.x2 - this.homeArea.x1};
     this.redData.getHeight = function(){return this.homeArea.y2 - this.homeArea.y1};
     this.redData.angle = this.levelData.REDangle;
-    this.redData.score = this.levelData.REDscore;
+    this.redData.score = 0;
     this.redData.scoreText = this.levelData.REDscoreText;
     this.redData.collecting = this.levelData.REDcollecting;
     this.redData.gravityLine = this.levelData.REDgravityLine;
@@ -73,6 +75,7 @@ create: function() {
     this.playerCollisionGroup = this.game.physics.p2.createCollisionGroup();
     this.asteroidCollisionGroup = this.game.physics.p2.createCollisionGroup();
     this.wallsCollisionGroup = this.game.physics.p2.createCollisionGroup();
+    this.backgroundCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
     //set bounds 
     this.game.world.setBounds(0, 0, 1200, 800); 
@@ -185,9 +188,11 @@ createShips: function(){
     this.shipBlue.body.collides(this.asteroidCollisionGroup, this.asteroidCollide, this);
     this.shipBlue.body.collides(this.playerCollisionGroup, null, this);
     this.shipBlue.body.collides(this.wallsCollisionGroup, null, this);
+    this.shipBlue.body.collides(this.backgroundCollisionGroup, null, this);
     this.shipBlue.body.mass = this.SHIPMASS;
     this.shipBlue.body.angle = this.blueData.angle;
     this.shipBlue.anchor.setTo(0.5);
+    this.shipBlue.body.damping = this.SHIPBODYDAMPING;
     //particle storm
     this.blueParticleManager = this.game.plugins.add(Phaser.ParticleStorm);
     this.blueEmitterData = {
@@ -216,10 +221,12 @@ createShips: function(){
     this.shipRed.body.collides(this.asteroidCollisionGroup, this.asteroidCollide, this);
     this.shipRed.body.collides(this.playerCollisionGroup, null, this);
     this.shipRed.body.collides(this.wallsCollisionGroup, null, this);
+    this.shipRed.body.collides(this.backgroundCollisionGroup, null, this);
     this.shipRed.body.mass = this.SHIPMASS;
     this.shipRed.body.angle = this.redData.angle;
     // this.shipRed.scale.set(0.25);
     this.shipRed.body.debug = this.DEBUG;
+    this.shipRed.body.damping = this.SHIPBODYDAMPING;
     this.redParticleManager = this.game.plugins.add(Phaser.ParticleStorm);
 
     this.redEmitterData = {
@@ -248,8 +255,65 @@ createShips: function(){
   },
 
 roundEnd: function() {
-    this.game.state.start('Game', true, false, this.levelData.nextLevel);
+    AsteroidMath.MenuState.blueScore.push({level: this.levelData.name, score: this.blueData.score});
+    AsteroidMath.MenuState.redScore.push({level: this.levelData.name, score: this.redData.score});
+   
+    if(this.levelData.nextLevel == null){
+        //console.log("GameEnd");
+        this.game.state.start('End');
+    }
+    else{
+        //create next level menu
+        this.nextLevelMenu();
+    }
   },
+nextLevelMenu: function(){
+        var graphics = this.game.add.graphics();
+        graphics.lineStyle(1, "black", 1);            
+        graphics.beginFill(0xFFFFFF, 0.9);            
+        graphics.drawRoundedRect(400, 300, 400, 200);            
+        graphics.endFill(); 
+
+
+        var textStyle = {
+            fontSize: '24px',
+            fill: this.font1,
+            fill: 'black'
+        }
+
+        var levelCompletedText = this.game.add.text(this.game.width/2, this.game.height/2 - 50, "Taso suoritettu!", textStyle);
+        levelCompletedText.anchor.setTo(0.5);
+
+        //button 
+        var nextLvlBtn = this.add.graphics(0, 0);            
+        // draw a rectangle            
+        nextLvlBtn.lineStyle(1, "black", 1);            
+        nextLvlBtn.beginFill(0x0000FF, 1);            
+        nextLvlBtn.drawRect(this.game.width/2 - 100, this.game.height/2 + 25, 200, 50);                       
+        nextLvlBtn.endFill();            
+     
+        nextLvlBtn.inputEnabled = true;           
+        nextLvlBtn.events.onInputDown.add(function(){
+             this.game.state.start('Game', true, false, this.levelData.nextLevel);
+        }, this);
+
+        //button hover
+        nextLvlBtn.events.onInputOut.add(function(){
+          nextLvlBtn.alpha = 1;
+        }, this)
+        nextLvlBtn.events.onInputOver.add(function(){
+          nextLvlBtn.alpha = 0.8;
+        }, this)      
+
+        //button label
+        var nextRoundtextStyle = {
+            fontSize: '24px',
+            fill: this.font1,
+            fill: 'white'
+        }
+        var nextRoundText = this.game.add.text(this.game.width/2, this.game.height/2 + 50, "Seuraava taso", nextRoundtextStyle);
+        nextRoundText.anchor.setTo(0.5);
+},
 createBackground: function(){
     //create gravity wells
     var blueGravityWellmanager = this.game.plugins.add(Phaser.ParticleStorm);
@@ -295,9 +359,10 @@ createBackground: function(){
     background.body.loadPolygon('physics', this.levelData.background);
     background.body.static = true;
     // console.log(background.body.y);
-    background.body.setCollisionGroup(this.wallsCollisionGroup);
+    background.body.setCollisionGroup(this.backgroundCollisionGroup);
     background.body.collides(this.asteroidCollisionGroup, null, this);
     background.body.collides(this.playerCollisionGroup, null, this);
+    background.body.collides(this.wallsCollisionGroup, null, this);
     this.game.world.sendToBack(background);
 
 
@@ -305,17 +370,16 @@ createBackground: function(){
     if(this.levelData.walls){
         var obj = this.levelData.walls
         Object.keys(obj).forEach(function(key) {
-            console.log(key, obj[key]);
+            // console.log(key, obj[key]);
             var wall = this.game.add.sprite(obj[key].x, obj[key].y, key);
             this.game.physics.p2.enable(wall, this.DEBUG);
             wall.body.clearShapes();
             wall.scale.set(this.assetScaleFactor);
             wall.body.loadPolygon('physics', key);
-            wall.body.static = true;
+            wall.body.static = obj[key].staticBody;
             wall.body.angle =  obj[key].angle;
             wall.body.setCollisionGroup(this.wallsCollisionGroup);
-            wall.body.collides(this.asteroidCollisionGroup, null, this);
-            wall.body.collides(this.playerCollisionGroup, null, this);
+            wall.body.collides([this.backgroundCollisionGroup, this.wallsCollisionGroup, this.asteroidCollisionGroup, this.playerCollisionGroup]);
         }, this);
     }
 },
@@ -387,7 +451,7 @@ loadLevelTexts: function(){
         var xChangeTextInfoStyle = {
             font: this.font1,
             fontSize: '14px',
-            fill: 'black'
+            fill: this.levelData.textColor
         }
         var roundNameTextStyle = {
             font: this.font1,
@@ -430,15 +494,21 @@ loadLevelTexts: function(){
     var barX = 515;
     var barY = 412;
     var barWidth = 170;
-    var barHeight = 20;
+    var barHeight = 22;
     var barAlpha = 0.25;
+    var lineWidth = 1;
+
+    var barBGLineColor = '0x000000';
+    var barBGColor = '0x0000FF';
+    var barLineColor = '0x000000'
+    var barColor = '0x00FF00'
 
     this.nextRoundBarBG = this.game.add.graphics(0,0);
-    this.nextRoundBarBG.lineStyle(2, '0xFF0000');
-    this.nextRoundBarBG.beginFill('0xFF0000', barAlpha) 
+    this.nextRoundBarBG.lineStyle(lineWidth, barBGLineColor);
+    this.nextRoundBarBG.beginFill(barBGColor, barAlpha) 
     this.nextRoundBarBG.drawRoundedRect(barX, barY, barWidth, barHeight, 1);
     this.nextRoundBarBG.endFill();
-    //PROGRESS BAR 
+    //NEXT ROUND PROGRESS BAR 
     this.nextRoundBar = this.game.add.graphics(0,0);
     //TEXT
     this.nextRoundText = this.game.add.text(600, barY + 13, "Seuraava taso", xChangeTextInfoStyle)
@@ -447,18 +517,17 @@ loadLevelTexts: function(){
     this.roundTimer = this.game.time.create(true);
     this.roundTimerCount = 0;
     this.roundTimer.loop(250, function(){
-            var width = (barWidth * this.roundTimerCount)/this.levelData.roundTime
+            var width = Math.min((barWidth * this.roundTimerCount)/this.levelData.roundTime, barWidth);
             if(width > 0){
                 this.nextRoundBar.clear();
-                this.nextRoundBar.lineStyle(2, '0x00FF00');
-                this.nextRoundBar.beginFill('0x00FF00', 1) 
+                this.nextRoundBar.lineStyle(0.5, barLineColor);
+                this.nextRoundBar.beginFill(barColor, 1) 
                 this.nextRoundBar.drawRoundedRect(barX, barY, width, barHeight, 1);
                 this.nextRoundBar.endFill();
             }
-        if(this.levelData.roundTime - this.roundTimerCount <= 0){
-            if(!this.levelData.isLastRound){
+        if(this.levelData.roundTime - this.roundTimerCount <= 0 & this.gameOn){
+                this.gameOn = false;
                 this.roundEnd();
-            }
         }
         this.roundTimerCount += 0.25;
     }, this);
@@ -474,8 +543,8 @@ loadLevelTexts: function(){
     var barWidth2 = 170;
     var barHeight2 = 20;
     this.xChangeBarBG = this.game.add.graphics(0,0);
-    this.xChangeBarBG.lineStyle(2, '0xFF0000');
-    this.xChangeBarBG.beginFill('0xFF0000', barAlpha) 
+    this.xChangeBarBG.lineStyle(lineWidth, barBGLineColor);
+    this.xChangeBarBG.beginFill(barBGColor, barAlpha) 
     this.xChangeBarBG.drawRoundedRect(barX1, barY2, barWidth2, barHeight2, 1);
     this.xChangeBarBG.endFill();
     //xChangeBar 
@@ -490,8 +559,8 @@ loadLevelTexts: function(){
         var width = ((barWidth2 * this.roundTimerCount)/this.levelData.xChangeTime) % barWidth2
         if(width > 0){
             this.xChangeBar.clear();
-            this.xChangeBar.lineStyle(2, '0x00FF00');
-            this.xChangeBar.beginFill('0x00FF00', 1) 
+            this.xChangeBar.lineStyle(0.5, barLineColor);
+            this.xChangeBar.beginFill(barColor, 1) 
             this.xChangeBar.drawRoundedRect(barX1, barY2, width, barHeight2, 1);
             this.xChangeBar.endFill();
         }
@@ -658,7 +727,7 @@ updateShipScore: function(shipColor, valueText){
         // player.answerTextWithOutX.addColor('yellow', index);
         // player.answerTextWithOutX.addColor('white', index + this.levelData.xValue.toString().length);
         // console.log(index + this.levelData.xValue.toString().length);
-        var tween2 = this.game.add.tween(player.answerTextWithOutX).to({alpha: 1}, 3000, 'Expo.easeOut', true);
+        var tween2 = this.game.add.tween(player.answerTextWithOutX).to({alpha: 1}, 2500, 'Expo.easeOut', true);
 
         tween2.onComplete.add(function(){
             player.answerTextWithOutX.setText(textWithAnswer);
@@ -683,7 +752,6 @@ updateShipScore: function(shipColor, valueText){
         }, this, true);
     }, this, true);
 },
-
 parseText: function(text, replace, replacement){
     var replaceObj = {
         "^2": '\u{00B2}',

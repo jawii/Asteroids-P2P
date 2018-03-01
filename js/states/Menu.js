@@ -7,13 +7,20 @@ AsteroidMath.MenuState = {
   },
   preload: function() {
 
+
+    //SCOREDATA
+    //acces these at gamesate with AsteroidMath.MenuState.BLUESCORE
+    this.blueScore = [];
+    this.redScore = [];
+
     this.levelData2 = {
-        name: "Round 2",
+        name: "Taso 2",
         jsonValues: 'values2',
         background: 'background2',
-        isLastRound: false,
-        roundTime: 60 * 5,
-        walls: {wall1: {x:600, y: 400, angle: 0}, wall2: {x:200, y: 600, angle: 180}, wall3: {x: 1000, y: 150, angle: 180}},
+        nextLevel: null,
+        // roundTime: 60 * 5,
+        roundTime: 20,
+        walls: {wall1: {x:600, y: 400, angle: 0, staticBody: true}, wall2: {x:200, y: 600, angle: 180, staticBody: true}, wall3: {x: 1000, y: 150, angle: 180, staticBody: true}},
         textColor: 'white',
         xValue: -2,
         xValues: [-3, -2, -1, 0, 1, 2, 3],
@@ -24,7 +31,6 @@ AsteroidMath.MenuState = {
         BLUEspawn: {x: 150, y: 130},
         BLUEhomeArea: {x1: 25, x2: 225, y1: 25, y2: 125},
         BLUEangle: 135,
-        BLUEscore: 0,
         BLUEscoreText: {x: 263, y: 170},
         BLUEcollecting: false,
         BLUEgravityLine: {x1: 80, y1: 235, x2: 165, y2: 235},
@@ -38,14 +44,15 @@ AsteroidMath.MenuState = {
         REDgravityLine: {x1: 1040, y1: 600, x2: 1140, y2: 600},
     };
     this.levelData1 = {
-      name: "Round 1",
+      name: "Taso 1",
       jsonValues: 'values1',
       isLastRound: false,
       nextLevel: AsteroidMath.MenuState.levelData2,
-      roundTime: 4 * 60,
+      // roundTime: 4 * 60,
+      roundTime: 5,
       textColor: 'black',
       background: 'background1',
-      walls: {wall4: {x:600, y: 400, angle: 0}},
+      walls: {wall4: {x:600, y: 400, angle: 0 , staticBody: true}},
       xValue: -2,
       xValues: [1, 2, 3],
       xChangeTime: 60,
@@ -54,7 +61,6 @@ AsteroidMath.MenuState = {
       BLUEspawn: {x: 240, y: 400},
       BLUEhomeArea: {x1: 0, x2: 190, y1: 317, y2: 487},
       BLUEangle: 135,
-      BLUEscore: 0,
       BLUEscoreText: {x: 35, y: 260},
       BLUEcollecting: false,
       BLUEgravityLine: {x1: 213, y1: 353, x2: 213, y2: 450},

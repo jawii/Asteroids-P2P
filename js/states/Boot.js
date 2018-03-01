@@ -13,6 +13,9 @@ AsteroidMath.BootState = {
     this.scale.pageAlignHorizontally = true;
     this.scale.pageAlignVertically = true;
 
+    //run on background
+    this.game.stage.disableVisibilityChange = true;
+
   },
   preload: function() {
     //assets we'll use in the loading screen

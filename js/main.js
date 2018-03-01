@@ -6,5 +6,6 @@ AsteroidMath.game.state.add('Boot', AsteroidMath.BootState);
 AsteroidMath.game.state.add('Preload', AsteroidMath.PreloadState); 
 AsteroidMath.game.state.add('Menu', AsteroidMath.MenuState); 
 AsteroidMath.game.state.add('Game', AsteroidMath.GameState);
+AsteroidMath.game.state.add('End', AsteroidMath.EndState);
 
 AsteroidMath.game.state.start('Boot'); 
