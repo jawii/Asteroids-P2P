@@ -653,7 +653,7 @@ asteroidCollide: function(ship, asteroid){
 updateShipScore: function(shipColor, valueText){
     // console.log(valueText);
     var player = (shipColor == 'blue') ? this.blueData : this.redData;
-    console.log(player);
+    // console.log(player);
 
     //convert X from valueText to current text and evaluate it
     var value = eval(valueText.value.replace(/x/g, this.levelData.xValue));
