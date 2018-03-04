@@ -35,6 +35,12 @@ AsteroidMath.PreloadState = {
     this.load.image('wall1', 'assets/images/wall1.png');
     this.load.image('wall2', 'assets/images/wall2.png');
     this.load.image('wall3', 'assets/images/wall3.png');
+    //LVL3
+    this.load.image('background3', 'assets/images/background3.png');
+    this.load.image('wall5', 'assets/images/wall5.png');
+    this.load.image('wall6', 'assets/images/wall6.png');
+    this.load.image('wall7', 'assets/images/wall7.png');
+    this.load.image('wall8', 'assets/images/wall8.png');
     
     //ships
     this.game.load.atlasJSONHash('ships', 'assets/images/ships.png', 'assets/images/ships.json');

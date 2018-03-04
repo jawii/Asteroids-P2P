@@ -33,17 +33,13 @@ AsteroidMath.MenuState = {
 
     //generate levels
     this.generateLevelDatas();
-
-
-
-
-
   },
 
   startGame: function(){
     this.levelData1.roundTime = this.roundTime * 60;
     this.levelData2.roundTime = this.roundTime * 60;
-    this.game.state.start('Game', true, false, this.levelData1);
+    this.levelData3.roundTime = this.roundTime * 60;
+    this.game.state.start('Game', true, false, this.levelData3);
   },
   createTexts: function(){
     //gameName
@@ -71,21 +67,59 @@ AsteroidMath.MenuState = {
 
     var gameNameText = this.game.add.text(this.game.width/2, 150, 'ASTEROIDMATH', gameNamestyle);
     gameNameText.anchor.setTo(0.5);
-    gameNameText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5);
+    gameNameText.setShadow(5, 5, 'rgba(0,0,0,0.9)', 10);
 
     var gameNameInfoText = this.game.add.text(gameNameText.x, gameNameText.y + 75, 'Kahden pelaajan avaruuspeli', gameNameInfoStyle);
     gameNameInfoText.anchor.setTo(0.5);
 
-    var text = 'Kerää aluksellasi kappaleita omaan kotipaikkaasi. Kappaleen arvo riippuu muuttujan x arvosta ja arvon saat näkymään koskettamalla kappaletta. Yritä kerätä mahdollisimman monta pistettä';
+    var text = 'Kerää aluksellasi kappaleita omaan kotipaikkaasi. Kappaleen arvo riippuu muuttujan x arvosta. Yritä kerätä mahdollisimman monta pistettä';
     var gameInfoText = this.game.add.text(gameNameText.x, gameNameText.y + 200, text, gameInfoTextStyle);
     gameInfoText.anchor.setTo(0.5);
+    gameInfoText.setShadow(3, 3, 'rgba(0,0,0,0.8)', 5);
   },
   generateLevelDatas: function(){
+
+    this.levelData3 = {
+      name: "Taso 3",
+      jsonValues: 'values2',
+      background: 'background3',
+      nextLevel: null,
+      // roundTime: 60 * 5,
+      roundTime: AsteroidMath.MenuState.roundTime,
+      walls: {
+        wall5: {x:200, y: 200, angle: 0, staticBody: false, mass: 6}, 
+        wall6: {x:200, y: 400, angle: 180, staticBody: false, mass: 6}, 
+        wall7: {x: 800, y: 400, angle: 180, staticBody: false, mass: 6},
+        wall8: {x: 600, y: 400, angle: 0, staticBody: true}
+      },
+      textColor: 'white',
+      xValue: -2,
+      xValues: [-3, -2, -1, 0, 1, 2, 3],
+      xChangeTime: 90,
+      colors: ['0xfbb03b', '0xFFFF00', '0x00FFFF', "0x0071bc", "0x7ac943", "0x3fa9f5"],
+      spawnCoords: [[600, 300], [600, 600]],
+      //BLUEDATA
+      BLUEspawn: {x: 300, y: 750},
+      BLUEhomeArea: {x1: 0, x2: 250, y1: 660, y2: 800},
+      BLUEangle: 90,
+      BLUEscoreText: {x: 263, y: 170},
+      BLUEcollecting: false,
+      BLUEgravityLine: {x1: 300, y1: 670, x2: 300, y2: 790},
+      //REDDATA
+      REDspawn: {x: 900, y: 75},
+      REDhomeArea: {x1: 950, x2: 1200, y1: 0, y2: 150},
+      REDangle: -90,
+      REDscore: 0,
+      REDscoreText: {x: 930, y: 675},
+      REDcollecting: false,
+      REDgravityLine: {x1: 900, y1: 10, x2: 900, y2: 140},
+    };
+
     this.levelData2 = {
       name: "Taso 2",
       jsonValues: 'values2',
       background: 'background2',
-      nextLevel: null,
+      nextLevel: AsteroidMath.MenuState.levelData3,
       // roundTime: 60 * 5,
       roundTime: AsteroidMath.MenuState.roundTime,
       walls: {wall1: {x:600, y: 400, angle: 0, staticBody: true}, wall2: {x:200, y: 600, angle: 180, staticBody: true}, wall3: {x: 1000, y: 150, angle: 180, staticBody: true}},
@@ -217,9 +251,11 @@ AsteroidMath.MenuState = {
 
     this.roundTimeInfoText = this.game.add.text(600, 460, "Tason pituus (min)", roundTimeInfoTextStyle);
     this.roundTimeInfoText.anchor.setTo(0.5);
+    
 
     this.roundTimeText = this.game.add.text(this.roundTimeInfoText.x, this.roundTimeInfoText.y + 40, this.roundTime.toFixed(1), textStyle);
     this.roundTimeText.anchor.setTo(0.5);
+    this.roundTimeText.setShadow(3, 3, 'rgba(0,0,0,0.8)', 5);
 
     this.roundTimeIncrBtn = this.game.add.button(this.roundTimeText.x + 50, this.roundTimeText.y, 'incrBtn', function(){ 
       var newLen = this.roundTime + 0.5;
@@ -245,7 +281,7 @@ AsteroidMath.MenuState = {
     this.playButton.scale.setTo(0.5);
     var playBtnTxtStyle = {
       font: AsteroidMath.GameState.font1,
-      fill: 'white',
+      fill: 'green',
       fontSize: '34px'
     }
     this.playButtonText = this.game.add.text(this.playButton.x, this.playButton.y + 10, 'Aloita', playBtnTxtStyle);

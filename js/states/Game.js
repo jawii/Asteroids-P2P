@@ -118,6 +118,9 @@ create: function() {
     //TEST TASKS
     this.testTasks();
 
+    //pausemenu
+    this.createPauseBtn();
+
   },   
 
 update: function() {
@@ -378,6 +381,7 @@ createBackground: function(){
             wall.body.loadPolygon('physics', key);
             wall.body.static = obj[key].staticBody;
             wall.body.angle =  obj[key].angle;
+            if(obj[key].mass){wall.body.mass = obj[key].mass;}
             wall.body.setCollisionGroup(this.wallsCollisionGroup);
             wall.body.collides([this.backgroundCollisionGroup, this.wallsCollisionGroup, this.asteroidCollisionGroup, this.playerCollisionGroup]);
         }, this);
@@ -798,10 +802,28 @@ testTasks: function(){
     
     for (var i = 0 ; i < valueData.length ; i++){
         eval(valueData[i].value.replace(/x/g, x));
-    }
-    
+    }  
+},
+createPauseBtn: function(){
+    //pause menu
+    this.pause_label = this.game.add.text(1050, 10, 'Pause', {font: this.font1, fill: 'black', fontSize: '40px'});
+    this.pause_label.inputEnabled = true;
+    this.pause_label.events.onInputUp.add(function () {
+        // When the paus button is pressed, we pause the game
+        if (!this.game.paused == true){
+        this.game.paused = true;
+        this.pause_label.text = "Paused";
+        this.pause_label.fill = "red";
+        }
+        else{
+          this.game.paused = false;
+          this.pause_label.text = "Pause";
+          this.pause_label.fill = "black";
+        }
+        }, this);
 }
-};
+
+}
 
 
 // createMission: function(){
