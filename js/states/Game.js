@@ -141,39 +141,39 @@ update: function() {
     // }
 
     //ship movement
-    if (this.cursors.left.isDown){this.shipBlue.body.rotateLeft(50);}
-    else if(this.cursors.right.isDown){this.shipBlue.body.rotateRight(50);}
-    else{this.shipBlue.body.setZeroRotation();}
-    if(this.cursors.up.isDown){
-        // this.shipBlue.frameName = 'ship_blue2.png';
-        this.shipBlue.body.thrust(this.THRUST);
-        var angle = this.shipBlue.body.angle
-        var x_angle = - Math.sin(angle* 0.0174532925);
-        var y_angle = Math.cos(angle * 0.0174532925);
-        var x = this.shipBlue.x + x_angle * 18;
-        var y = this.shipBlue.y +  y_angle * 18;
-        this.blueEmitterData.vx = { value: { min: x_angle * 4, max: x_angle * 5} };
-        this.blueEmitterData.vy = { value: { min: y_angle * 4, max: y_angle * 5} };
-        this.blueShipEmitter.emit('basic', x, y, { zone: this.blueShipCircle, total: 1 });
-    }
-    else if(this.cursors.down.isDown){this.shipBlue.body.reverse(this.THRUST/2);}
-
-    if (this.shipRedLeft.isDown){this.shipRed.body.rotateLeft(50);}
-    else if(this.shipRedRight.isDown){this.shipRed.body.rotateRight(50);}
+    if (this.cursors.left.isDown){this.shipRed.body.rotateLeft(50);}
+    else if(this.cursors.right.isDown){this.shipRed.body.rotateRight(50);}
     else{this.shipRed.body.setZeroRotation();}
-    if(this.shipRedUp.isDown){
-        // this.shipRed.frameName = 'ship_red2.png';
+    if(this.cursors.up.isDown){
+        // this.shipRed.frameName = 'ship_Red2.png';
         this.shipRed.body.thrust(this.THRUST);
         var angle = this.shipRed.body.angle
         var x_angle = - Math.sin(angle* 0.0174532925);
         var y_angle = Math.cos(angle * 0.0174532925);
         var x = this.shipRed.x + x_angle * 18;
         var y = this.shipRed.y +  y_angle * 18;
-        this.redEmitterData.vx = { value: { min: x_angle, max: x_angle * 2} };
-        this.redEmitterData.vy = { value: { min: y_angle, max: y_angle * 2} };
-        this.redShipEmitter.emit('basic', x, y, { zone: this.blueShipCircle, total: 1 });
+        this.redEmitterData.vx = { value: { min: x_angle * 4, max: x_angle * 5} };
+        this.redEmitterData.vy = { value: { min: y_angle * 4, max: y_angle * 5} };
+        this.redShipEmitter.emit('basic', x, y, { zone: this.redShipCircle, total: 1 });
     }
-    else if(this.shipRedDown.isDown){this.shipRed.body.reverse(this.THRUST/2);}
+    else if(this.cursors.down.isDown){this.shipRed.body.reverse(this.THRUST/2);}
+
+    if (this.shipBlueLeft.isDown){this.shipBlue.body.rotateLeft(50);}
+    else if(this.shipBlueRight.isDown){this.shipBlue.body.rotateRight(50);}
+    else{this.shipBlue.body.setZeroRotation();}
+    if(this.shipBlueUp.isDown){
+        // this.shipBlue.frameName = 'ship_Blue2.png';
+        this.shipBlue.body.thrust(this.THRUST);
+        var angle = this.shipBlue.body.angle
+        var x_angle = - Math.sin(angle* 0.0174532925);
+        var y_angle = Math.cos(angle * 0.0174532925);
+        var x = this.shipBlue.x + x_angle * 18;
+        var y = this.shipBlue.y +  y_angle * 18;
+        this.blueEmitterData.vx = { value: { min: x_angle, max: x_angle * 2} };
+        this.blueEmitterData.vy = { value: { min: y_angle, max: y_angle * 2} };
+        this.blueShipEmitter.emit('basic', x, y, { zone: this.blueShipCircle, total: 1 });
+    }
+    else if(this.shipBlueDown.isDown){this.shipBlue.body.reverse(this.THRUST/2);}
   },
 
 createShips: function(){
@@ -245,10 +245,10 @@ createShips: function(){
     this.redShipEmitter.addToWorld();
     //controls
     this.cursors = this.game.input.keyboard.createCursorKeys();   
-    this.shipRedUp = this.game.input.keyboard.addKey(Phaser.Keyboard.W); 
-    this.shipRedDown = this.game.input.keyboard.addKey(Phaser.Keyboard.S); 
-    this.shipRedLeft = this.game.input.keyboard.addKey(Phaser.Keyboard.A); 
-    this.shipRedRight = this.game.input.keyboard.addKey(Phaser.Keyboard.D); 
+    this.shipBlueUp = this.game.input.keyboard.addKey(Phaser.Keyboard.W); 
+    this.shipBlueDown = this.game.input.keyboard.addKey(Phaser.Keyboard.S); 
+    this.shipBlueLeft = this.game.input.keyboard.addKey(Phaser.Keyboard.A); 
+    this.shipBlueRight = this.game.input.keyboard.addKey(Phaser.Keyboard.D); 
     //weapon fire
     // this.blueFire = this.game.input.keyboard.addKey(Phaser.Keyboard.CONTROL); 
     // this.redFire = this.game.input.keyboard.addKey(Phaser.Keyboard.Q);

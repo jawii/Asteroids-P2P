@@ -7,14 +7,14 @@ AsteroidMath.EndState = {
   },
   preload: function() {
 
-    // this.blueScore = AsteroidMath.MenuState.blueScore;
-    // this.redScore = AsteroidMath.MenuState.redScore;
+    this.blueScore = AsteroidMath.MenuState.blueScore;
+    this.redScore = AsteroidMath.MenuState.redScore;
 
     // this.blueScore = [{level: 'Round 1', score: 10}, {level: 'Round 2', score: 5}];
     // this.redScore = [{level: 'Round 1', score: -20}, {level: 'Round 2', score: 5}];
 
-    this.blueScore = [{level: 'Taso 1', score: 14}, {level: 'Taso 2', score: -10}, {level: 'Taso 3', score: 7}];
-    this.redScore = [{level: 'Taso 1', score: -20}, {level: 'Taso 2', score: 10}, {level: 'Taso 3', score: 20}];
+    // this.blueScore = [{level: 'Taso 1', score: 14}, {level: 'Taso 2', score: -10}, {level: 'Taso 3', score: 7}];
+    // this.redScore = [{level: 'Taso 1', score: -20}, {level: 'Taso 2', score: 10}, {level: 'Taso 3', score: 20}];
 
     // console.log(this.blueScore);
     // console.log(this.redScore);
@@ -27,8 +27,12 @@ AsteroidMath.EndState = {
   },
   create: function() {
 
-    // this.game.stage.backgroundColor = "#12242D";
+    //background
     this.game.stage.backgroundColor = "black";
+
+    var bgSprite = this.game.add.sprite(this.game.width/2, this.game.height/2, 'endbackground');
+    bgSprite.anchor.setTo(0.5);
+    bgSprite.scale.setTo(0.5);
 
 
     

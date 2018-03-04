@@ -11,8 +11,21 @@ AsteroidMath.PreloadState = {
 
     //textures   
     this.load.image('sky', 'assets/images/sky.png');
+    // this.load.image('gameNameText', 'assets/images/gameNameText.png')
 
-    //floors and walls
+    //buttons
+    this.load.image('button1', 'assets/images/button1.png');
+    //increment and decrement buttons
+    this.load.image('incrBtn', 'assets/images/incrBtn.png');
+    this.load.image('decrBtn', 'assets/images/decrBtn.png');
+
+    //menubg
+    this.load.image('menubackground', 'assets/images/menubackground.png');
+    this.load.image('endbackground', 'assets/images/endbackground.png');
+    //keys
+    this.load.image('keysBlue', 'assets/images/keysBlue.png');
+    this.load.image('keysRed', 'assets/images/keysRed.png');
+
 
     //LVL1
     this.load.image('background1', 'assets/images/background1.png');
