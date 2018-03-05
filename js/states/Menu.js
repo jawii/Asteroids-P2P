@@ -39,7 +39,7 @@ AsteroidMath.MenuState = {
     this.levelData1.roundTime = this.roundTime * 60;
     this.levelData2.roundTime = this.roundTime * 60;
     this.levelData3.roundTime = this.roundTime * 60;
-    this.game.state.start('Game', true, false, this.levelData3);
+    this.game.state.start('Game', true, false, this.levelData2);
   },
   createTexts: function(){
     //gameName
@@ -81,7 +81,7 @@ AsteroidMath.MenuState = {
 
     this.levelData3 = {
       name: "Taso 3",
-      jsonValues: 'values2',
+      jsonValues: 'values3',
       background: 'background3',
       nextLevel: null,
       // roundTime: 60 * 5,
@@ -89,20 +89,22 @@ AsteroidMath.MenuState = {
       walls: {
         wall5: {x:200, y: 200, angle: 0, staticBody: false, mass: 6}, 
         wall6: {x:200, y: 400, angle: 180, staticBody: false, mass: 6}, 
-        wall7: {x: 800, y: 400, angle: 180, staticBody: false, mass: 6},
-        wall8: {x: 600, y: 400, angle: 0, staticBody: true}
+        wall7: {x: 900, y: 400, angle: 180, staticBody: false, mass: 6},
+        wall8: {x: 600, y: 400, angle: 0, staticBody: true},
+        wall9: {x: 600, y: 700, angle: 0, staticBody: false, mass: 6},
+        wall10: {x: 900, y: 600, angle: 0, staticBody: false, mass: 6}
       },
       textColor: 'white',
       xValue: -2,
-      xValues: [-3, -2, -1, 0, 1, 2, 3],
+      xValues: [-3, -2, -1],
       xChangeTime: 90,
       colors: ['0xfbb03b', '0xFFFF00', '0x00FFFF', "0x0071bc", "0x7ac943", "0x3fa9f5"],
-      spawnCoords: [[600, 300], [600, 600]],
+      spawnCoords: [[600, 300], [600, 550], [500, 400], [700, 400]],
       //BLUEDATA
       BLUEspawn: {x: 300, y: 750},
       BLUEhomeArea: {x1: 0, x2: 250, y1: 660, y2: 800},
       BLUEangle: 90,
-      BLUEscoreText: {x: 263, y: 170},
+      BLUEscoreText: {x: 50, y: 620},
       BLUEcollecting: false,
       BLUEgravityLine: {x1: 300, y1: 670, x2: 300, y2: 790},
       //REDDATA
@@ -110,7 +112,7 @@ AsteroidMath.MenuState = {
       REDhomeArea: {x1: 950, x2: 1200, y1: 0, y2: 150},
       REDangle: -90,
       REDscore: 0,
-      REDscoreText: {x: 930, y: 675},
+      REDscoreText: {x: 1135, y: 187},
       REDcollecting: false,
       REDgravityLine: {x1: 900, y1: 10, x2: 900, y2: 140},
     };

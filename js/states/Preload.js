@@ -41,6 +41,8 @@ AsteroidMath.PreloadState = {
     this.load.image('wall6', 'assets/images/wall6.png');
     this.load.image('wall7', 'assets/images/wall7.png');
     this.load.image('wall8', 'assets/images/wall8.png');
+    this.load.image('wall9', 'assets/images/wall9.png');
+    this.load.image('wall10', 'assets/images/wall10.png');
     
     //ships
     this.game.load.atlasJSONHash('ships', 'assets/images/ships.png', 'assets/images/ships.json');
@@ -53,6 +55,7 @@ AsteroidMath.PreloadState = {
     //load values
     this.load.text('values1', 'js/data/values1.json');
     this.load.text('values2', 'js/data/values2.json');
+    this.load.text('values3', 'js/data/values3.json');
     // this.load.text('values', 'js/data/valuesTest.json');
     
     //emitter

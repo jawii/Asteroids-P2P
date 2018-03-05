@@ -1,0 +1,92 @@
+{
+	"value1": {
+		"text": "-x + 1",
+		"value": "-x + 1",
+		"valueNeg": "-(x) + 1"
+	},
+	"value2": {
+		"text": "x - 1",
+		"value": "x - 1",
+		"valueNeg": "x - 1"
+	},
+	"value4": {
+		"text": "-x - 1",
+		"value": "- x - 1",
+		"valueNeg": "- (x) - 1"
+	},
+	"value5": {
+		"text": "x^2",
+		"value": "x * x ",
+		"valueNeg": "x * (x)"
+	},
+	"value6": {
+		"text": "x - 4",
+		"value": "x - 4",
+		"valueNeg": "x - 4"
+	},
+	"value7": {
+		"text": "2 - x^2",
+		"value": "2 - x * x",
+		"valueNeg": "2 - (x) * (x)"
+	},
+	"value8": {
+		"text": "x^1 + 2",
+		"value": "x + 2",
+		"valueNeg": "x + 2"
+	},
+	"value10": {
+		"text": "-1 * x",
+		"value": "-1 * x",
+		"valueNeg": "-1 * (x)"
+	},
+	"value11": {
+		"text": "x + 4",
+		"value": "x + 4",
+		"valueNeg": "x + 4"
+	},
+	"value12": {
+		"text": "x - 4",
+		"value": "x - 4",
+		"valueNeg": "x - 4"
+	},
+	"value13": {
+		"text": "10 - x",
+		"value": "10 - x",
+		"valueNeg": "10 - (x)"
+	},
+	"value14": {
+		"text": "x + x",
+		"value": "x + x",
+		"valueNeg": "x + (x)"
+	},
+	"value15": {
+		"text": "2x + 1",
+		"value": "2 * x + 1",
+		"valueNeg": "2 * (x) + 1"
+	},
+	"value16": {
+		"text": "2x - 1",
+		"value": "2 * x + 1",
+		"valueNeg": "2 * (x) + 1"
+	},
+	"value17": {
+		"text": "-2x + 1",
+		"value": "-2 * x + 1",
+		"valueNeg": "-2 * (x) + 1"
+	},
+	"value18": {
+		"text": "-2x - 1",
+		"value": "-2 * x - 1",
+		"valueNeg": "-2 * (x) - 1"
+	},
+	"value19": {
+		"text": "3x - 5",
+		"value": "3 * x - 5",
+		"valueNeg": "3 * (x) - 5"
+	},
+	"value20": {
+		"text": "3x - 10",
+		"value": "3 * x - 10",
+		"valueNeg": "3 * (x) - 10"
+	}
+}
