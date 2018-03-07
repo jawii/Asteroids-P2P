@@ -1,23 +1,28 @@
 {
 	"value1": {
-		"text": "-x + 1",
-		"value": "-x + 1",
-		"valueNeg": "-(x) + 1"
+		"text": "x + 1",
+		"value": "x + 1",
+		"valueNeg": "x + 1"
 	},
 	"value2": {
 		"text": "x - 1",
 		"value": "x - 1",
 		"valueNeg": "x - 1"
 	},
+	"value3": {
+		"text": "-x + 1",
+		"value": "- x + 1",
+		"valueNeg": "-(x) + 1"
+	},
 	"value4": {
 		"text": "-x - 1",
-		"value": "-x - 1",
-		"valueNeg": "-(x) - 1"
+		"value": "- x - 1",
+		"valueNeg": "- (x) - 1"
 	},
 	"value5": {
-		"text": "x^2",
-		"value": "x * x ",
-		"valueNeg": "x * (x)"
+		"text": "x^2 - 2",
+		"value": "x * x - 2",
+		"valueNeg": "x * (x) - 2"
 	},
 	"value6": {
 		"text": "x - 4",
@@ -33,6 +38,11 @@
 		"text": "x^1 + 2",
 		"value": "x + 2",
 		"valueNeg": "x + 2"
+	},
+	"value9": {
+		"text": "-2 * (-1) * x",
+		"value": "-2 * (-1) * x",
+		"valueNeg": "-2 * (-1) * (x)"
 	},
 	"value10": {
 		"text": "-1 * x",

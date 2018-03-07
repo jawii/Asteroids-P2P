@@ -121,6 +121,17 @@ create: function() {
     //pausemenu
     this.createPauseBtn();
 
+    //this create sounds
+    this.sound1 = this.game.add.audio("1");
+    this.sound2 = this.game.add.audio("2");
+    this.sound3 = this.game.add.audio("3");
+    this.soundBegin = this.game.add.audio("begin");
+    // this.soundHit = this.game.add.audio("hit");
+
+    this.bgSound = this.game.add.audio("bgMusic");
+
+    this.bgSound.loop = true;
+    this.bgSound.play();
   },   
 
 update: function() {
@@ -260,9 +271,11 @@ createShips: function(){
 roundEnd: function() {
     AsteroidMath.MenuState.blueScore.push({level: this.levelData.name, score: this.blueData.score});
     AsteroidMath.MenuState.redScore.push({level: this.levelData.name, score: this.redData.score});
-   
+    
+
     if(this.levelData.nextLevel == null){
         //console.log("GameEnd");
+        this.bgSound.destroy();
         this.game.state.start('End');
     }
     else{
@@ -297,6 +310,8 @@ nextLevelMenu: function(){
      
         nextLvlBtn.inputEnabled = true;           
         nextLvlBtn.events.onInputDown.add(function(){
+             AsteroidMath.MenuState.click.play();
+             this.bgSound.destroy();
              this.game.state.start('Game', true, false, this.levelData.nextLevel);
         }, this);
 
@@ -374,7 +389,7 @@ createBackground: function(){
         var obj = this.levelData.walls
         Object.keys(obj).forEach(function(key) {
             // console.log(key, obj[key]);
-            var wall = this.game.add.sprite(obj[key].x, obj[key].y, key);
+            var wall = this.game.add.sprite(obj[key].x, obj[key].y, 'sprites', key + '.png');
             this.game.physics.p2.enable(wall, this.DEBUG);
             wall.body.clearShapes();
             wall.scale.set(this.assetScaleFactor);
@@ -403,23 +418,27 @@ loadLevel: function(){
     text.anchor.setTo(0.5);
     this.countDownTime.start();
     this.countDownTime.loop(1000, function(){
-       counter++;
+       counter += 0.5;
        //text.setText(counter);
-       if (counter == 1){
+       if (counter == 0.5){
         text.setText(this.levelData.name);
         //console.log(this.currentTaskid);
         // this.updateTaskQuestion(this, this.currentTaskid);
        }
-       else if (counter == 2){
+       else if (counter == 1.0){
         text.setText("3");
+        this.sound3.play();
        }
-       else if (counter == 3) {
+       else if (counter == 2.0) {
         text.setText("2");
+        this.sound2.play();
        }
-       else if (counter == 4) {
+       else if (counter == 3.0) {
         text.setText("1");
+        this.sound1.play();
        }
-       else if (counter == 5){
+       else if (counter == 4.0){
+         this.soundBegin.play();
          this.countDownTime.stop();
          text.destroy(); 
          this.loadLevelTexts();
@@ -649,6 +668,7 @@ createRandomAsteroid: function(xCoord, yCoord){
     return newElement;
 }, 
 asteroidCollide: function(ship, asteroid){
+        // this.soundHit.play();
         asteroid.sprite.valuetext.visible = true;
         this.game.time.events.add(Phaser.Timer.SECOND * 5, function(){
             asteroid.sprite.valuetext.visible = false;
@@ -821,6 +841,22 @@ createPauseBtn: function(){
           this.pause_label.fill = "black";
         }
         }, this);
+    // sound pause
+    this.bgMusicPlaying = true;
+    this.soundButton = this.game.add.button(10, 10, 'soundOn', function(){
+        this.bgMusicPlaying = !this.bgMusicPlaying;
+        if(!this.bgMusicPlaying){
+            this.bgSound.stop();
+            this.soundButton.loadTexture('soundOff');
+        }
+        else{
+            this.bgSound.play();
+            this.soundButton.loadTexture('soundOn');
+
+        }
+    }, this);
+    this.soundButton.scale.setTo(0.5);
+
 }
 
 }

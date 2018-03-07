@@ -33,13 +33,23 @@ AsteroidMath.MenuState = {
 
     //generate levels
     this.generateLevelDatas();
+
+    //audio
+    this.click = this.game.add.audio("click");
   },
 
   startGame: function(){
+    this.click.play();
     this.levelData1.roundTime = this.roundTime * 60;
     this.levelData2.roundTime = this.roundTime * 60;
     this.levelData3.roundTime = this.roundTime * 60;
-    this.game.state.start('Game', true, false, this.levelData2);
+
+
+    this.levelData1.xChangeTime = Math.max(25, this.roundTime/3 * 60);
+    this.levelData2.xChangeTime = Math.max(25, this.roundTime/3 * 60);
+    this.levelData3.xChangeTime = Math.max(25, this.roundTime/3 * 60);
+
+    this.game.state.start('Game', true, false, this.levelData1);
   },
   createTexts: function(){
     //gameName
@@ -202,44 +212,12 @@ AsteroidMath.MenuState = {
   },
   createButtons: function(){
 
-    // //ROUND LEN BUTTON
 
     var textStyle = {
       font: AsteroidMath.GameState.font1,
       fill: 'white',
       fontSize: '30px'
     };
-
-    // var roundLenInfoTextStyle = {
-    //   font: AsteroidMath.GameState.font1,
-    //   fill: 'black',
-    //   fontSize: '24px'
-    // };
-
-    // this.roundLen = 3;
-
-    // this.roundLenInfoText = this.game.add.text(450, 460, "Tasojen lukumäärä", roundLenInfoTextStyle);
-    // this.roundLenInfoText.anchor.setTo(0.5);
-
-    // this.roundLenText = this.game.add.text(this.roundLenInfoText.x, this.roundLenInfoText.y + 40, this.roundLen, textStyle);
-    // this.roundLenText.anchor.setTo(0.5);
-
-    // this.roundLenIncrBtn = this.game.add.button(this.roundLenText.x + 40, this.roundLenText.y, 'incrBtn', function(){ 
-    //   var newLen = this.roundLen + 1;
-    //   this.roundLen = Math.min(newLen, 3); 
-    //   this.roundLenText.setText(this.roundLen);
-    // }, this);
-    // this.roundLenIncrBtn.anchor.setTo(0.5);
-    // this.roundLenIncrBtn.scale.setTo(0.10);
-
-    // this.roundLenDecrBtn = this.game.add.button(this.roundLenText.x - 40, this.roundLenText.y, 'decrBtn', function(){ 
-    //   var newLen = this.roundLen - 1;
-    //   this.roundLen = Math.max(newLen, 1); 
-    //   this.roundLenText.setText(this.roundLen);
-    //   this.roundLenText.setText(this.roundLen);
-    // }, this);
-    // this.roundLenDecrBtn.anchor.setTo(0.5);
-    // this.roundLenDecrBtn.scale.setTo(0.10);
 
     //ROUND TIME BUTTON
 
@@ -251,8 +229,13 @@ AsteroidMath.MenuState = {
 
     this.roundTime = 3;
 
+    this.roundsNumber = this.game.add.text(600, 430, "Kolme tasoa", roundTimeInfoTextStyle);
+    this.roundsNumber.anchor.setTo(0.5);
+
     this.roundTimeInfoText = this.game.add.text(600, 460, "Tason pituus (min)", roundTimeInfoTextStyle);
     this.roundTimeInfoText.anchor.setTo(0.5);
+
+
     
 
     this.roundTimeText = this.game.add.text(this.roundTimeInfoText.x, this.roundTimeInfoText.y + 40, this.roundTime.toFixed(1), textStyle);
@@ -263,14 +246,16 @@ AsteroidMath.MenuState = {
       var newLen = this.roundTime + 0.5;
       this.roundTime = Math.min(newLen, 6); 
       this.roundTimeText.setText(this.roundTime.toFixed(1));
+      this.click.play();
     }, this);
     this.roundTimeIncrBtn.anchor.setTo(0.5);
     this.roundTimeIncrBtn.scale.setTo(0.10);
 
     this.roundTimeDecrBtn = this.game.add.button(this.roundTimeText.x - 50, this.roundTimeText.y, 'decrBtn', function(){ 
       var newLen = this.roundTime - 0.5;
-      this.roundTime = Math.max(newLen, 0.5); 
+      this.roundTime = Math.max(newLen, 1); 
       this.roundTimeText.setText(this.roundTime.toFixed(1));
+      this.click.play();
     }, this);
     this.roundTimeDecrBtn.anchor.setTo(0.5);
     this.roundTimeDecrBtn.scale.setTo(0.10);

@@ -7,6 +7,9 @@ AsteroidMath.EndState = {
   },
   preload: function() {
 
+    //destroy gamesound
+    if(AsteroidMath.GameState.bgSound){AsteroidMath.GameState.bgSound.destroy();}
+  
     this.blueScore = AsteroidMath.MenuState.blueScore;
     this.redScore = AsteroidMath.MenuState.redScore;
 
@@ -233,6 +236,23 @@ AsteroidMath.EndState = {
       },this)
        
     }
+
+    //Return to main menu button
+            //PLAYBUTTON
+        this.restartButton = this.game.add.button(600, 720, 'button1', function(){this.game.state.start('Menu')}, this);
+        this.restartButton.anchor.setTo(0.5);
+        this.restartButton.scale.setTo(0.5);
+        var playBtnTxtStyle = {
+          font: AsteroidMath.GameState.font1,
+          fill: 'green',
+          fontSize: '34px'
+        }
+        this.restartButtonText = this.game.add.text(this.restartButton.x, this.restartButton.y + 10, 'Alkuun', playBtnTxtStyle);
+        this.restartButtonText.anchor.setTo(0.5);
+        this.restartButtonText.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5);
+
+        this.restartButton.onInputOver.add(function(){this.restartButton.alpha = 0.7;}, this);
+        this.restartButton.onInputOut.add(function(){this.restartButton.alpha = 1;}, this);
   },  
 
   update: function() {
