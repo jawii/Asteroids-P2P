@@ -1,8 +1,7 @@
 # Asteroids-P2P
-Math - Learning Asteroid Game With P2P Physics
+Asteroids Two player mathematics learning Game  
 
-
-Math Learning Game  
+You can play the game here: https://jawi.itch.io/asteroid-math-2-players
 
 Made with Phaser
 https://phaser.io
